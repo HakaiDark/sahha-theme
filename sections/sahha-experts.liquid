@@ -1,0 +1,188 @@
+{%- comment -%}
+  Sahha Daily expert panel — ported from <ExpertsSection>. Each expert is a
+  block; clicking a card opens an accessible bio modal with a WhatsApp CTA.
+{%- endcomment -%}
+
+<section class="sahha-section sahha-experts color-{{ section.settings.color_scheme }}" id="experts" data-section-id="{{ section.id }}">
+  <div class="sahha-wrap">
+    <div class="sahha-intro">
+      {%- if section.settings.kicker != blank -%}<span class="sahha-kicker center">{{ section.settings.kicker }}</span>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2 class="sahha-h-lg">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.subtext != blank -%}<p class="sahha-lead" style="margin-inline:auto">{{ section.settings.subtext }}</p>{%- endif -%}
+    </div>
+
+    <div class="sahha-experts__grid">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign nm = block.settings.name | strip
+          assign clean = nm | replace: 'Dr. ', '' | replace: 'Msc. ', '' | replace: 'Mr. ', '' | replace: 'Mrs. ', '' | replace: 'Ms. ', ''
+          assign parts = clean | split: ' '
+          capture initials
+            for p in parts limit: 2
+              echo p | slice: 0
+            endfor
+          endcapture
+        -%}
+        <button
+          type="button"
+          class="sahha-experts__card"
+          {{ block.shopify_attributes }}
+          aria-haspopup="dialog"
+          aria-controls="ExpertModal-{{ block.id }}"
+        >
+          <span class="sahha-experts__av" style="background: linear-gradient(150deg, {{ block.settings.avatar_color_1 }}, {{ block.settings.avatar_color_2 }});">
+            {%- if block.settings.avatar != blank -%}
+              {{ block.settings.avatar | image_url: width: 160 | image_tag: loading: 'lazy', alt: nm | escape }}
+            {%- else -%}
+              {{ initials | upcase }}
+            {%- endif -%}
+          </span>
+          <span class="sahha-experts__region">{{ block.settings.flag }} {{ block.settings.region }}</span>
+          <h3>{{ nm }}</h3>
+          <span class="sahha-experts__role">{{ block.settings.role }}</span>
+          <span class="sahha-experts__readbio">
+            {{ section.settings.read_label | default: 'Read biography' }}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+
+        {%- comment -%} Modal {%- endcomment -%}
+        <div class="sahha-experts__modal" id="ExpertModal-{{ block.id }}" role="dialog" aria-modal="true" aria-label="{{ nm | escape }}" hidden>
+          <div class="sahha-experts__overlay" data-sahha-modal-close></div>
+          <div class="sahha-experts__dialog" role="document">
+            <button type="button" class="sahha-experts__close" data-sahha-modal-close aria-label="Close">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="sahha-experts__modal-head">
+              <span class="sahha-experts__av lg" style="background: linear-gradient(150deg, {{ block.settings.avatar_color_1 }}, {{ block.settings.avatar_color_2 }});">
+                {%- if block.settings.avatar != blank -%}{{ block.settings.avatar | image_url: width: 200 | image_tag: loading: 'lazy', alt: nm | escape }}{%- else -%}{{ initials | upcase }}{%- endif -%}
+              </span>
+              <div>
+                <span class="sahha-experts__region">{{ block.settings.flag }} {{ block.settings.region }}</span>
+                <h3>{{ nm }}</h3>
+                <span class="sahha-experts__role">{{ block.settings.role }}</span>
+              </div>
+            </div>
+            <p class="sahha-experts__bio">{{ block.settings.bio }}</p>
+            {%- assign wa_number = settings.whatsapp_number | remove: '+' | remove: ' ' | remove: '-' -%}
+            {%- if wa_number != blank -%}
+              {%- assign first = parts | first -%}
+              {%- assign wa_msg = 'Hi Sahha Daily! I' | append: "'" | append: 'd like to ask ' | append: first | append: ' a question' | url_encode -%}
+              <a class="sahha-btn accent full" href="https://wa.me/{{ wa_number }}?text={{ wa_msg }}" target="_blank" rel="noopener">
+                <span>Ask {{ first }} on WhatsApp</span>
+              </a>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.querySelector('[data-section-id="{{ section.id }}"]');
+    if (!root) return;
+    var lastTrigger = null;
+    function open(modal, trigger) {
+      lastTrigger = trigger;
+      modal.hidden = false;
+      requestAnimationFrame(function () { modal.classList.add('is-open'); });
+      document.body.style.overflow = 'hidden';
+      var close = modal.querySelector('.sahha-experts__close');
+      if (close) close.focus();
+    }
+    function close(modal) {
+      modal.classList.remove('is-open');
+      document.body.style.overflow = '';
+      var done = function () { modal.hidden = true; modal.removeEventListener('transitionend', done); };
+      modal.addEventListener('transitionend', done);
+      if (lastTrigger) lastTrigger.focus();
+    }
+    root.querySelectorAll('.sahha-experts__card').forEach(function (card) {
+      card.addEventListener('click', function () {
+        var modal = document.getElementById(card.getAttribute('aria-controls'));
+        if (modal) open(modal, card);
+      });
+    });
+    root.querySelectorAll('[data-sahha-modal-close]').forEach(function (el) {
+      el.addEventListener('click', function () { close(el.closest('.sahha-experts__modal')); });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      var openModal = root.querySelector('.sahha-experts__modal.is-open');
+      if (openModal) close(openModal);
+    });
+  })();
+</script>
+
+{% stylesheet %}
+.sahha-experts { background-color: rgb(var(--color-background)); }
+.sahha-experts__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px,2vw,30px); }
+.sahha-experts__card { text-align: left; cursor: pointer; position: relative; padding: clamp(28px,2.6vw,40px); border-radius: var(--r-lg); background: var(--paper-2); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; overflow: hidden; transition: box-shadow .5s var(--ease), transform .5s var(--ease); }
+.sahha-experts__card:hover { box-shadow: var(--brand-shadow-lg); transform: translateY(-3px); }
+.sahha-experts__av { width: 74px; height: 74px; border-radius: 50%; display: grid; place-items: center; overflow: hidden; font-family: var(--font-heading-family); font-weight: 900; font-size: 1.5rem; color: #fff; }
+.sahha-experts__av img { width: 100%; height: 100%; object-fit: cover; }
+.sahha-experts__av.lg { width: 78px; height: 78px; font-size: 1.7rem; flex: none; }
+.sahha-experts__region { font-size: 0.78rem; color: var(--muted); font-weight: 700; }
+.sahha-experts__card h3, .sahha-experts__modal-head h3 { font-family: var(--font-body-family); font-weight: 800; font-size: 1.1rem; color: var(--ink); margin: 0; }
+.sahha-experts__role { color: var(--accent); font-size: 0.7rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
+.sahha-experts__readbio { display: inline-flex; align-items: center; gap: 8px; margin-top: 6px; color: var(--accent); font-weight: 800; font-size: 0.84rem; transition: gap .3s var(--ease); }
+.sahha-experts__card:hover .sahha-experts__readbio { gap: 12px; }
+/* modal */
+.sahha-experts__modal { position: fixed; inset: 0; z-index: 330; display: grid; place-items: center; }
+.sahha-experts__overlay { position: absolute; inset: 0; background: rgba(24,33,27,0.55); backdrop-filter: blur(5px); opacity: 0; transition: opacity .4s var(--ease); }
+.sahha-experts__dialog { position: relative; width: min(540px, 92vw); max-height: 88vh; overflow-y: auto; background: var(--paper-2); border-radius: var(--r-xl); box-shadow: var(--brand-shadow-lg); padding: clamp(26px,4vw,40px); transform: translateY(14px) scale(.96); opacity: 0; transition: opacity .4s var(--ease), transform .45s var(--ease); }
+.sahha-experts__modal.is-open .sahha-experts__overlay { opacity: 1; }
+.sahha-experts__modal.is-open .sahha-experts__dialog { opacity: 1; transform: none; }
+.sahha-experts__close { position: absolute; top: 16px; right: 16px; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--paper); color: var(--green); display: grid; place-items: center; cursor: pointer; }
+.sahha-experts__close:hover { background: var(--green); color: #fff; }
+.sahha-experts__modal-head { display: flex; align-items: center; gap: 18px; margin-bottom: 20px; padding-right: 40px; }
+.sahha-experts__modal-head > div { display: flex; flex-direction: column; gap: 2px; }
+.sahha-experts__bio { color: var(--ink-soft); font-size: 1rem; line-height: 1.7; margin: 0 0 24px; }
+@media (max-width: 749px) { .sahha-experts__grid { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) {
+  .sahha-experts__card, .sahha-experts__overlay, .sahha-experts__dialog { transition: none; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sahha Experts",
+  "tag": "section",
+  "class": "sahha-experts-wrapper",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "Meet the panel" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Real experts, <em>real guidance.</em></p>" },
+    { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "Every product we carry is reviewed by an independent panel of specialists across Europe and Lebanon." },
+    { "type": "text", "id": "read_label", "label": "Read-bio link label", "default": "Read biography" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-3" }
+  ],
+  "blocks": [
+    {
+      "type": "expert",
+      "name": "Expert",
+      "settings": [
+        { "type": "text", "id": "name", "label": "Name", "default": "Dr. Sara Mohyeldine" },
+        { "type": "text", "id": "role", "label": "Role", "default": "Local Wellness Advisor" },
+        { "type": "text", "id": "region", "label": "Region", "default": "Lebanon" },
+        { "type": "text", "id": "flag", "label": "Flag emoji", "default": "🇱🇧" },
+        { "type": "textarea", "id": "bio", "label": "Biography" },
+        { "type": "image_picker", "id": "avatar", "label": "Avatar image (optional — initials shown if empty)" },
+        { "type": "color", "id": "avatar_color_1", "label": "Avatar gradient — start", "default": "#2E5B3F" },
+        { "type": "color", "id": "avatar_color_2", "label": "Avatar gradient — end", "default": "#1C3C2A" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sahha Experts",
+      "blocks": [
+        { "type": "expert", "settings": { "name": "Msc. Sara Shehab", "role": "Health Sciences (MSc)", "region": "Germany", "flag": "🇩🇪", "avatar_color_1": "#2E5B3F", "avatar_color_2": "#1C3C2A" } },
+        { "type": "expert", "settings": { "name": "Dr. Tharwat Mohyeldine", "role": "Pharmaceutical Researcher", "region": "France", "flag": "🇫🇷", "avatar_color_1": "#E0744A", "avatar_color_2": "#C45D34" } },
+        { "type": "expert", "settings": { "name": "Dr. Sara Mohyeldine", "role": "Local Wellness Advisor", "region": "Lebanon", "flag": "🇱🇧", "avatar_color_1": "#A7C49A", "avatar_color_2": "#2E5B3F" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

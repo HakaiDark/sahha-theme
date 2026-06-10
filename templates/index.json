@@ -1,210 +1,96 @@
 {
   "sections": {
-    "image_banner": {
-      "type": "image-banner",
-      "blocks": {
-        "heading": {
-          "type": "heading",
-          "settings": {
-            "heading": "Image banner",
-            "heading_size": "h0"
-          }
-        },
-        "text": {
-          "type": "text",
-          "settings": {
-            "text": "Give customers details about the banner image(s) or content on the template.",
-            "text_style": "body"
-          }
-        },
-        "button": {
-          "type": "buttons",
-          "settings": {
-            "button_label_1": "Shop all",
-            "button_link_1": "shopify://collections/all",
-            "button_style_secondary_1": true,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
-          }
-        }
-      },
-      "block_order": [
-        "heading",
-        "text",
-        "button"
-      ],
+    "sahha_hero": {
+      "type": "sahha-hero",
       "settings": {
-        "image_overlay_opacity": 40,
-        "image_height": "large",
-        "desktop_content_position": "bottom-center",
-        "show_text_box": false,
-        "desktop_content_alignment": "center",
-        "color_scheme": "scheme-3",
-        "mobile_content_alignment": "center",
-        "stack_images_on_mobile": false,
-        "show_text_below": false
-      }
-    },
-    "rich_text": {
-      "type": "rich-text",
-      "blocks": {
-        "heading": {
-          "type": "heading",
-          "settings": {
-            "heading": "Talk about your brand",
-            "heading_size": "h1"
-          }
-        },
-        "text": {
-          "type": "text",
-          "settings": {
-            "text": "<p>Share information about your brand with your customers. Describe a product, make announcements, or welcome customers to your store.<\/p>"
-          }
-        }
-      },
-      "block_order": [
-        "heading",
-        "text"
-      ],
-      "settings": {
-        "color_scheme": "scheme-1",
-        "full_width": true,
-        "padding_top": 40,
-        "padding_bottom": 0
+        "heading": "<p>Premium Wellness <em>Supplements</em></p>",
+        "arabic_line": "صحتك بالديني",
+        "tagline": "Daily support, better you 🌿",
+        "subtext": "Premium wellness supplements for energy, beauty, immunity and active living, sourced from Europe and delivered to your door.",
+        "rating_label": "4.8 rating",
+        "reviews_label": "1,200+ reviews",
+        "button_label": "Shop products",
+        "button_link": "shopify://collections/all",
+        "button_label_2": "Talk to an expert",
+        "button_link_2": "#experts",
+        "color_scheme": "scheme-1"
       }
     },
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
-        "title": "Featured products",
+        "title": "The everyday essentials",
         "heading_size": "h2",
+        "description": "The formulas our customers reach for most.",
+        "show_description": true,
         "collection": "all",
         "products_to_show": 8,
         "columns_desktop": 4,
         "color_scheme": "scheme-1",
-        "show_view_all": false,
-        "swipe_on_mobile": false,
+        "show_view_all": true,
+        "view_all_style": "outline",
+        "swipe_on_mobile": true,
         "image_ratio": "adapt",
         "show_secondary_image": true,
         "show_vendor": false,
-        "show_rating": false,
+        "show_rating": true,
         "columns_mobile": "2",
-        "padding_top": 28,
-        "padding_bottom": 36
+        "padding_top": 56,
+        "padding_bottom": 56
       }
     },
-    "collage": {
-      "type": "collage",
-      "blocks": {
-        "collection-0": {
-          "type": "collection",
-          "settings": {
-            "collection": ""
-          }
-        },
-        "product": {
-          "type": "product",
-          "settings": {
-            "product": "",
-            "second_image": false
-          }
-        },
-        "collection-1": {
-          "type": "collection",
-          "settings": {
-            "collection": ""
-          }
-        }
-      },
-      "block_order": [
-        "collection-0",
-        "product",
-        "collection-1"
-      ],
+    "collection_list": {
+      "type": "collection-list",
       "settings": {
-        "heading": "Multimedia collage",
+        "title": "Find your priority",
         "heading_size": "h2",
-        "desktop_layout": "left",
-        "mobile_layout": "collage",
-        "color_scheme": "scheme-1",
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
-    "video": {
-      "type": "video",
-      "settings": {
-        "heading": "",
-        "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
-        "heading_size": "h1",
-        "description": "",
-        "full_width": false,
-        "color_scheme": "scheme-1",
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
-    "multicolumn": {
-      "type": "multicolumn",
-      "blocks": {
-        "column1": {
-          "type": "column",
-          "settings": {
-            "title": "Column",
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.<\/p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column2": {
-          "type": "column",
-          "settings": {
-            "title": "Column",
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.<\/p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "column3": {
-          "type": "column",
-          "settings": {
-            "title": "Column",
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.<\/p>",
-            "link_label": "",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "column1",
-        "column2",
-        "column3"
-      ],
-      "settings": {
-        "title": "",
-        "heading_size": "h1",
-        "image_width": "third",
-        "image_ratio": "adapt",
+        "image_ratio": "square",
         "columns_desktop": 3,
-        "column_alignment": "center",
-        "background_style": "none",
-        "button_label": "",
-        "button_link": "",
-        "swipe_on_mobile": false,
-        "color_scheme": "scheme-1",
-        "columns_mobile": "1",
-        "padding_top": 36,
-        "padding_bottom": 36
+        "color_scheme": "scheme-3",
+        "show_view_all": false,
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "padding_top": 56,
+        "padding_bottom": 56
+      }
+    },
+    "sahha_experts": {
+      "type": "sahha-experts",
+      "blocks": {
+        "e1": { "type": "expert", "settings": { "name": "Msc. Sara Shehab", "role": "Health Sciences (MSc)", "region": "Germany", "flag": "🇩🇪", "bio": "Originally from Lebanon and now based in Germany, with a BSc in Nursing and an MSc in Health Sciences. She blends scientific knowledge with a practical, relatable approach — advising on European product standards and the everyday rituals that help us feel good in our own skin.", "avatar_color_1": "#2E5B3F", "avatar_color_2": "#1C3C2A" } },
+        "e2": { "type": "expert", "settings": { "name": "Dr. Tharwat Mohyeldine", "role": "Pharmaceutical Researcher", "region": "France", "flag": "🇫🇷", "bio": "A pharmaceutical researcher and medicinal chemist passionate about wellness and preventive health. Through science-backed education and trusted guidance, she helps individuals make informed choices and achieve their health goals.", "avatar_color_1": "#E0744A", "avatar_color_2": "#C45D34" } },
+        "e3": { "type": "expert", "settings": { "name": "Dr. Sara Mohyeldine", "role": "Local Wellness Advisor", "region": "Lebanon", "flag": "🇱🇧", "bio": "Our Lebanese expert and the one closest to our customers — advising on local needs and making sure each product genuinely fits everyday life in Lebanon.", "avatar_color_1": "#A7C49A", "avatar_color_2": "#2E5B3F" } }
+      },
+      "block_order": ["e1", "e2", "e3"],
+      "settings": {
+        "kicker": "Meet the panel",
+        "heading": "<p>Real experts, <em>real guidance.</em></p>",
+        "subtext": "Every product we carry is reviewed by an independent panel of specialists across Europe and Lebanon.",
+        "color_scheme": "scheme-3"
+      }
+    },
+    "sahha_who_we_are": {
+      "type": "sahha-who-we-are",
+      "blocks": {
+        "v1": { "type": "value", "settings": { "title": "Trust", "text": "Verified originals, always" } },
+        "v2": { "type": "value", "settings": { "title": "Transparency", "text": "Honest about what we carry" } },
+        "v3": { "type": "value", "settings": { "title": "Care", "text": "Chosen by our expert panel" } }
+      },
+      "block_order": ["v1", "v2", "v3"],
+      "settings": {
+        "kicker": "Who we are",
+        "heading": "<p>A family-led <em>wellness brand.</em></p>",
+        "subtext": "Our goal is to bring trusted European wellness products closer to customers in Lebanon, based in West Bekaa, Al Qaraoun.",
+        "arabic_line": "دعم يومي لصحة أفضل 🌿",
+        "color_scheme": "scheme-5"
       }
     }
   },
   "order": [
-    "image_banner",
-    "rich_text",
+    "sahha_hero",
     "featured_collection",
-    "collage",
-    "video",
-    "multicolumn"
+    "collection_list",
+    "sahha_experts",
+    "sahha_who_we_are"
   ]
 }

@@ -1,0 +1,136 @@
+{%- comment -%}
+  Sahha Daily hero — ported from the Next.js <Hero>. Copy + product visual,
+  with a soft mint visual panel and a floating rating pill. Fully editable in
+  the theme editor. Motion is CSS-only, gated behind prefers-reduced-motion.
+{%- endcomment -%}
+
+{%- liquid
+  assign hero_image = section.settings.image
+  if hero_image == blank and section.settings.product != blank
+    assign hero_image = section.settings.product.featured_image
+  endif
+-%}
+
+<section class="sahha-hero color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}">
+  <span class="sahha-hero__orb a" aria-hidden="true"></span>
+  <span class="sahha-hero__orb b" aria-hidden="true"></span>
+
+  <div class="sahha-wrap sahha-hero__grid">
+    <div class="sahha-hero__copy">
+      {%- if section.settings.heading != blank -%}
+        <h1 class="sahha-hero__title">{{ section.settings.heading }}</h1>
+      {%- endif -%}
+
+      <span class="sahha-hero__sep" aria-hidden="true"></span>
+
+      {%- if section.settings.arabic_line != blank -%}
+        <p class="sahha-hero__ar" dir="rtl">{{ section.settings.arabic_line }}</p>
+      {%- endif -%}
+      {%- if section.settings.tagline != blank -%}
+        <p class="sahha-hero__tagline">{{ section.settings.tagline }}</p>
+      {%- endif -%}
+      {%- if section.settings.subtext != blank -%}
+        <p class="sahha-lead sahha-hero__sub">{{ section.settings.subtext }}</p>
+      {%- endif -%}
+
+      <div class="sahha-hero__cta">
+        {%- if section.settings.button_label != blank -%}
+          <a class="sahha-btn accent" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">
+            <span>{{ section.settings.button_label }}
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+        {%- endif -%}
+        {%- if section.settings.button_label_2 != blank -%}
+          <a class="sahha-btn ghost" href="{{ section.settings.button_link_2 }}"><span>{{ section.settings.button_label_2 }}</span></a>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="sahha-hero__visual">
+      <div class="sahha-hero__prod">
+        {%- if hero_image != blank -%}
+          {{ hero_image | image_url: width: 900 | image_tag:
+            loading: 'eager',
+            sizes: '(min-width: 990px) 40vw, 80vw',
+            widths: '300, 450, 600, 750, 900',
+            alt: hero_image.alt | default: section.settings.heading | escape }}
+        {%- else -%}
+          {{ 'product-apparel-1' | placeholder_svg_tag: 'sahha-hero__placeholder' }}
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.rating_label != blank -%}
+        <div class="sahha-hero__pill">
+          <span class="ic">★</span>
+          <span class="tx">
+            <b>{{ section.settings.rating_label }}</b>
+            <span>{{ section.settings.reviews_label }}</span>
+          </span>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+.sahha-hero { position: relative; padding: clamp(48px,6vh,92px) 0 clamp(60px,8vw,110px); overflow: hidden; background-color: rgb(var(--color-background)); }
+.sahha-hero__grid { display: grid; grid-template-columns: 1.02fr 0.98fr; gap: clamp(32px,5vw,80px); align-items: center; }
+.sahha-hero__copy { position: relative; z-index: 2; max-width: 600px; }
+.sahha-hero__title { font-family: var(--font-heading-family); font-weight: 900; font-size: clamp(2.9rem,5.6vw,5.4rem); line-height: 1.02; letter-spacing: -0.02em; color: var(--ink); overflow-wrap: break-word; margin: 0; }
+.sahha-hero__title em, .sahha-hero__title .it { font-style: italic; color: var(--accent); }
+.sahha-hero__sep { display: block; width: 64px; height: 3px; border-radius: 999px; background: var(--sage); margin: 20px 0; }
+.sahha-hero__ar { font-family: var(--font-heading-family); direction: rtl; text-align: left; font-size: clamp(1.2rem,2vw,1.6rem); font-weight: 800; color: var(--green); margin: 0; }
+.sahha-hero__ar .o { color: var(--accent); }
+.sahha-hero__tagline { margin: 10px 0 0; font-family: var(--font-heading-family); font-weight: 700; font-size: clamp(1.15rem,1.9vw,1.55rem); line-height: 1.1; color: var(--green); }
+.sahha-hero__tagline em, .sahha-hero__tagline .it { font-style: italic; color: var(--accent); }
+.sahha-hero__sub { margin: 22px 0 30px; max-width: 44ch; color: var(--ink-soft); }
+.sahha-hero__cta { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.sahha-hero__visual { position: relative; aspect-ratio: 1/1.04; border-radius: var(--r-xl); background: radial-gradient(120% 100% at 50% 30%, var(--tint-mint), var(--tint-sage) 78%); display: grid; place-items: center; overflow: hidden; box-shadow: var(--brand-shadow); }
+.sahha-hero__prod { position: relative; z-index: 2; width: 70%; filter: drop-shadow(0 40px 44px rgba(28,60,42,0.26)); animation: sahhaHeroRise .9s var(--ease) both; }
+.sahha-hero__prod img, .sahha-hero__prod svg { width: 100%; height: auto; display: block; }
+.sahha-hero__pill { position: absolute; z-index: 3; top: 12%; left: -4%; background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--r-pill); padding: 12px 18px; box-shadow: var(--brand-shadow-sm); display: flex; align-items: center; gap: 10px; }
+.sahha-hero__pill .ic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--tint-peach); color: var(--accent-deep); flex: none; }
+.sahha-hero__pill .tx { display: flex; flex-direction: column; line-height: 1.2; }
+.sahha-hero__pill .tx b { font-size: 0.84rem; color: var(--ink); white-space: nowrap; }
+.sahha-hero__pill .tx span { font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
+.sahha-hero__orb { position: absolute; border-radius: 50%; filter: blur(36px); opacity: .5; z-index: 0; pointer-events: none; }
+.sahha-hero__orb.a { width: 380px; height: 380px; background: var(--tint-sage); top: -90px; right: -60px; animation: sahhaHeroDrift 14s ease-in-out infinite alternate; }
+.sahha-hero__orb.b { width: 300px; height: 300px; background: var(--tint-peach); bottom: -80px; left: -40px; animation: sahhaHeroDrift 18s ease-in-out infinite alternate-reverse; }
+@keyframes sahhaHeroRise { from { opacity: 0; transform: translateY(22px) scale(.86); } to { opacity: 1; transform: none; } }
+@keyframes sahhaHeroDrift { from { transform: translate(0,0); } to { transform: translate(18px,24px); } }
+@media (max-width: 989px) {
+  .sahha-hero__grid { grid-template-columns: 1fr; }
+  .sahha-hero__visual { max-width: 460px; margin-inline: auto; order: -1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sahha-hero__prod, .sahha-hero__orb { animation: none; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sahha Hero",
+  "tag": "section",
+  "class": "sahha-hero-section",
+  "settings": [
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Premium Wellness <em>Supplements</em></p>" },
+    { "type": "text", "id": "arabic_line", "label": "Arabic line", "default": "صحتك بالديني" },
+    { "type": "text", "id": "tagline", "label": "Tagline", "default": "Daily support, better you 🌿" },
+    { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "Premium wellness supplements for energy, beauty, immunity and active living, sourced from Europe and delivered to your door." },
+    { "type": "header", "content": "Visual" },
+    { "type": "image_picker", "id": "image", "label": "Hero image" },
+    { "type": "product", "id": "product", "label": "…or pull image from a product" },
+    { "type": "text", "id": "rating_label", "label": "Rating pill — title", "default": "4.8 rating" },
+    { "type": "text", "id": "reviews_label", "label": "Rating pill — subtitle", "default": "1,200+ reviews" },
+    { "type": "header", "content": "Buttons" },
+    { "type": "text", "id": "button_label", "label": "Primary button label", "default": "Shop products" },
+    { "type": "url", "id": "button_link", "label": "Primary button link" },
+    { "type": "text", "id": "button_label_2", "label": "Secondary button label", "default": "Talk to an expert" },
+    { "type": "url", "id": "button_link_2", "label": "Secondary button link" },
+    { "type": "header", "content": "Appearance" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "Sahha Hero" }]
+}
+{% endschema %}

@@ -1,0 +1,95 @@
+{%- comment -%}
+  Sahha Daily "Who we are" band — ported from <WhoWeAre>. Image + copy + a
+  grid of value blocks, with an optional Arabic line.
+{%- endcomment -%}
+
+<section class="sahha-section sahha-wwa color-{{ section.settings.color_scheme }}" id="about" data-section-id="{{ section.id }}">
+  <div class="sahha-wrap sahha-wwa__grid">
+    <div class="sahha-wwa__media">
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 900 | image_tag:
+          loading: 'lazy',
+          sizes: '(min-width: 990px) 38vw, 90vw',
+          widths: '300, 450, 600, 750, 900',
+          alt: section.settings.image.alt | default: section.settings.heading | escape }}
+      {%- else -%}
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'sahha-wwa__placeholder' }}
+      {%- endif -%}
+    </div>
+
+    <div class="sahha-wwa__copy">
+      {%- if section.settings.kicker != blank -%}<span class="sahha-kicker center">{{ section.settings.kicker }}</span>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2 class="sahha-h-lg">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.subtext != blank -%}<p class="sahha-lead">{{ section.settings.subtext }}</p>{%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <div class="sahha-wwa__vals">
+          {%- for block in section.blocks -%}
+            <div class="sahha-wwa__v" {{ block.shopify_attributes }}>
+              <strong>{{ block.settings.title }}</strong>
+              <span>{{ block.settings.text }}</span>
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.arabic_line != blank -%}
+        <p class="sahha-wwa__ar" dir="rtl">{{ section.settings.arabic_line }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+.sahha-wwa { background-color: rgb(var(--color-background)); }
+.sahha-wwa__grid { display: grid; grid-template-columns: 0.82fr 1.18fr; gap: clamp(28px,4vw,68px); align-items: center; }
+.sahha-wwa__media { border-radius: var(--r-xl); overflow: hidden; box-shadow: var(--brand-shadow); border: 1px solid var(--line); background: #fff; }
+.sahha-wwa__media img, .sahha-wwa__media svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sahha-wwa__copy .sahha-lead { margin-top: 14px; }
+.sahha-wwa__copy .sahha-kicker.center { display: flex; margin-bottom: 14px; }
+.sahha-wwa__vals { display: grid; gap: 12px; margin-top: 26px; }
+.sahha-wwa__v { display: flex; flex-direction: column; gap: 2px; padding: 16px 20px; border-radius: var(--r-md); background: var(--paper-2); border: 1px solid var(--line); }
+.sahha-wwa__v strong { color: var(--green); font-size: 1rem; font-weight: 800; }
+.sahha-wwa__v span { color: var(--muted); font-size: 0.88rem; }
+.sahha-wwa__ar { margin-top: 16px; color: var(--green); font-weight: 700; direction: rtl; text-align: right; font-family: var(--font-heading-family); }
+@media (max-width: 989px) {
+  .sahha-wwa__grid { grid-template-columns: 1fr; }
+  .sahha-wwa__media { max-width: 460px; margin-inline: auto; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sahha Who We Are",
+  "tag": "section",
+  "class": "sahha-wwa-wrapper",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "Who we are" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>A family-led <em>wellness brand.</em></p>" },
+    { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "Our goal is to bring trusted European wellness products closer to customers in Lebanon, based in West Bekaa, Al Qaraoun." },
+    { "type": "text", "id": "arabic_line", "label": "Arabic line", "default": "دعم يومي لصحة أفضل 🌿" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-5" }
+  ],
+  "blocks": [
+    {
+      "type": "value",
+      "name": "Value",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Trust" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Verified originals, always" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sahha Who We Are",
+      "blocks": [
+        { "type": "value", "settings": { "title": "Trust", "text": "Verified originals, always" } },
+        { "type": "value", "settings": { "title": "Transparency", "text": "Honest about what we carry" } },
+        { "type": "value", "settings": { "title": "Care", "text": "Chosen by our expert panel" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

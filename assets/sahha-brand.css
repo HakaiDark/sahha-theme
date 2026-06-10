@@ -61,6 +61,52 @@ h1, h2, h3, h4, h5, h6,
 .account-page h1 { font-family: var(--font-heading-family); font-weight: var(--font-heading-weight); }
 
 /* =========================================================
+   SHARED SECTION UTILITIES  (used by sahha-* custom sections)
+   Ported from globals.css .sec/.intro/.kicker/.h-lg/.lead/.btn.
+   Brand heading font (Cairo) replaces the source's Playfair --serif.
+   ========================================================= */
+.sahha-wrap { width: min(100% - 2 * var(--gutter, clamp(24px,6vw,124px)), 1560px); margin-inline: auto; }
+.sahha-section { padding-block: clamp(56px, 7vw, 120px); position: relative; }
+
+.sahha-intro { text-align: center; max-width: 60ch; margin: 0 auto clamp(36px, 4vw, 56px); }
+.sahha-intro .sahha-kicker { justify-content: center; margin-bottom: 18px; }
+.sahha-intro h2 { margin-bottom: 16px; }
+
+.sahha-kicker {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-size: .78rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--green);
+}
+.sahha-kicker::before { content: ""; width: 34px; height: 1px; background: var(--line-2); }
+.sahha-kicker.center { justify-content: center; }
+
+.sahha-h-lg { font-family: var(--font-heading-family); font-weight: 900; line-height: 1.04; letter-spacing: -.01em; font-size: clamp(2rem, 3.8vw, 3.4rem); color: var(--ink); }
+.sahha-lead { font-size: clamp(1.05rem, 1.5vw, 1.32rem); color: var(--ink-soft); line-height: 1.66; max-width: 60ch; font-weight: 500; }
+.sahha-accent { color: var(--accent); }
+.sahha-it { font-style: italic; }
+
+.sahha-btn {
+  --bg: var(--green); --fg: #fff;
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  padding: 16px 32px; border-radius: var(--r-pill); font-family: var(--font-body-family);
+  font-weight: 700; font-size: .95rem; text-decoration: none; color: var(--fg);
+  background: var(--bg); border: 1px solid transparent; overflow: hidden;
+  box-shadow: var(--brand-shadow-sm); transition: color .4s var(--ease);
+}
+.sahha-btn span { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 10px; }
+.sahha-btn::after { content: ""; position: absolute; inset: 0; z-index: 1; background: var(--ink); transform: translateY(101%); border-radius: var(--r-pill); transition: transform .5s var(--ease); }
+.sahha-btn:hover::after { transform: translateY(0); }
+.sahha-btn.accent { --bg: var(--accent); }
+.sahha-btn.accent::after { background: var(--green-deep); }
+.sahha-btn.ghost { --bg: transparent; --fg: var(--ink); border-color: var(--line-2); box-shadow: none; }
+.sahha-btn.ghost::after { background: var(--green); }
+.sahha-btn.ghost:hover { color: #fff; border-color: var(--green); }
+.sahha-btn.full { width: 100%; }
+@media (prefers-reduced-motion: reduce) {
+  .sahha-btn, .sahha-btn::after { transition: none; }
+}
+
+/* =========================================================
    TWO-TONE WORDMARK  (Sahha = green, Daily = orange)
    Used in header + footer via snippets/sahha-wordmark.liquid
    ========================================================= */
