@@ -1,0 +1,21 @@
+{%- comment -%}
+  Floating WhatsApp bubble. Number + default message come from theme settings
+  (Theme settings → Sahha Daily). Hidden if no number is set.
+  Secondary support path — native checkout is the primary buy path.
+{%- endcomment -%}
+{%- assign wa_number = settings.whatsapp_number | remove: '+' | remove: ' ' | remove: '-' -%}
+{%- if wa_number != blank -%}
+  {%- assign wa_text = settings.whatsapp_message | default: 'Hi Sahha Daily! 🌿 I have a question' | url_encode -%}
+  <a
+    class="sahha-wa-bubble"
+    href="https://wa.me/{{ wa_number }}?text={{ wa_text }}"
+    target="_blank"
+    rel="noopener"
+    aria-label="{{ settings.whatsapp_label | default: 'Chat on WhatsApp' }}"
+  >
+    <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
+      <path d="M16.003 3.2c-7.06 0-12.8 5.74-12.8 12.8 0 2.257.59 4.46 1.71 6.402L3.2 28.8l6.57-1.72a12.74 12.74 0 0 0 6.233 1.588h.005c7.06 0 12.8-5.74 12.8-12.8 0-3.42-1.332-6.635-3.752-9.055A12.71 12.71 0 0 0 16.003 3.2Zm0 23.04h-.004a10.6 10.6 0 0 1-5.404-1.48l-.388-.23-4.01 1.05 1.07-3.91-.252-.402a10.6 10.6 0 0 1-1.62-5.668c0-5.864 4.77-10.634 10.64-10.634a10.56 10.56 0 0 1 7.51 3.114 10.56 10.56 0 0 1 3.114 7.52c0 5.864-4.77 10.634-10.64 10.634Zm5.83-7.96c-.32-.16-1.89-.932-2.182-1.04-.292-.106-.505-.16-.718.16-.213.32-.823 1.04-1.01 1.252-.186.213-.372.24-.692.08-.32-.16-1.35-.498-2.57-1.586-.95-.847-1.59-1.894-1.777-2.214-.186-.32-.02-.493.14-.652.144-.143.32-.372.48-.558.16-.187.213-.32.32-.533.106-.214.053-.4-.027-.56-.08-.16-.718-1.732-.984-2.372-.26-.622-.522-.538-.718-.548l-.612-.01c-.213 0-.56.08-.852.4-.292.32-1.118 1.092-1.118 2.664 0 1.572 1.144 3.09 1.304 3.304.16.213 2.252 3.44 5.456 4.823.762.33 1.357.527 1.82.674.765.243 1.46.209 2.01.127.613-.092 1.89-.772 2.156-1.518.266-.746.266-1.386.186-1.518-.08-.133-.292-.213-.612-.373Z"/>
+    </svg>
+    <span class="label">{{ settings.whatsapp_label | default: 'Chat on WhatsApp' }}</span>
+  </a>
+{%- endif -%}

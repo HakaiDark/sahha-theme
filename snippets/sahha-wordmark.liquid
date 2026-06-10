@@ -1,0 +1,19 @@
+{%- comment -%}
+  Two-tone Sahha Daily wordmark. "Sahha"/"صحة" = green, "Daily"/"دايلي" = orange.
+  Renders the Arabic form automatically on RTL locales.
+  Usage: {% render 'sahha-wordmark' %}   (optional: tag: 'span')
+{%- endcomment -%}
+{%- liquid
+  assign tag = tag | default: 'span'
+  assign is_rtl = false
+  if request.locale.iso_code contains 'ar'
+    assign is_rtl = true
+  endif
+-%}
+<{{ tag }} class="sahha-wordmark{% if is_rtl %} sahha-wordmark--ar{% endif %}" aria-label="Sahha Daily">
+  {%- if is_rtl -%}
+    <span class="s">صحة</span><span class="d">دايلي</span>
+  {%- else -%}
+    <span class="s">Sahha</span><span class="d">Daily</span>
+  {%- endif -%}
+</{{ tag }}>

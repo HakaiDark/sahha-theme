@@ -1,0 +1,116 @@
+/* =========================================================
+   SAHHA DAILY — brand skin layer (loaded after Dawn base.css)
+   Ported from the Next.js storefront globals.css :root tokens.
+   Edit brand color/opacity here; Dawn's color_schemes carry
+   the per-section background/text/button colors.
+   ========================================================= */
+:root {
+  /* Brand palette (single source of truth for custom sections) */
+  --paper:      #F6F2E9;  /* warm ivory base */
+  --paper-2:    #FFFFFF;  /* lighter card */
+  --cream:      #FBF9F2;
+  --sand:       #E3DAC6;
+  --ink:        #18211B;  /* near-black green */
+  --ink-soft:   #38453B;
+  --green:      #2E5B3F;  /* herbal green */
+  --green-deep: #1C3C2A;
+  --olive:      #6E8B5A;
+  --sage:       #A7C49A;
+  --sage-soft:  #C9DBBF;
+  --mint:       #DCE8D2;
+  --accent:     #E0744A;  /* vitality orange */
+  --accent-deep:#C45D34;
+  --accent-soft:#F0B79C;
+  --muted:      #5C6A60;
+  --line:       rgba(28,60,42,0.16);
+  --line-2:     rgba(28,60,42,0.28);
+
+  /* Soft section tints */
+  --tint-mint:  #E7F0DF;
+  --tint-sage:  #DCEAD2;
+  --tint-peach: #FAE9DD;
+  --tint-cream: #F1E9DA;
+  --tint-green: #EAF1E4;
+
+  /* Shape + motion */
+  --r-sm: 14px; --r-md: 22px; --r-lg: 32px; --r-xl: 52px; --r-pill: 999px;
+  --ease: cubic-bezier(.2,.8,.2,1);
+  --brand-shadow:    0 22px 54px -36px rgba(28,60,42,0.34);
+  --brand-shadow-lg: 0 38px 84px -46px rgba(28,60,42,0.40);
+  --brand-shadow-sm: 0 12px 30px -22px rgba(28,60,42,0.30);
+
+  /* Override Dawn's font families with the brand fonts.
+     Cairo (900) for headings + wordmark, Tajawal for body/UI.
+     (Neither is in Shopify's font picker; loaded via Google Fonts
+     <link> in theme.liquid.) */
+  --font-heading-family: 'Cairo', system-ui, sans-serif;
+  --font-heading-style: normal;
+  --font-heading-weight: 900;
+  --font-body-family: 'Tajawal', system-ui, sans-serif;
+  --font-body-style: normal;
+  --font-body-weight: 400;
+  --font-body-weight-bold: 700;
+}
+
+/* Belt-and-suspenders: ensure the brand families win even where
+   Dawn hardcodes the family off the settings object. */
+body { font-family: var(--font-body-family); }
+h1, h2, h3, h4, h5, h6,
+.h0, .h1, .h2, .h3, .h4, .h5,
+.title, .product__title, .banner__heading,
+.account-page h1 { font-family: var(--font-heading-family); font-weight: var(--font-heading-weight); }
+
+/* =========================================================
+   TWO-TONE WORDMARK  (Sahha = green, Daily = orange)
+   Used in header + footer via snippets/sahha-wordmark.liquid
+   ========================================================= */
+.sahha-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: .28em;
+  font-family: var(--font-heading-family);
+  font-weight: 900;
+  letter-spacing: -.01em;
+  line-height: 1;
+  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.1rem);
+  text-decoration: none;
+}
+.sahha-wordmark .s { color: var(--green); }
+.sahha-wordmark .d { color: var(--accent); }
+.sahha-wordmark--ar { direction: rtl; }
+/* On deep-green backgrounds (footer/dark scheme) lift the green half */
+.color-scheme-2 .sahha-wordmark .s,
+.banner--dark .sahha-wordmark .s { color: var(--sage); }
+
+/* =========================================================
+   FLOATING WHATSAPP BUBBLE
+   ========================================================= */
+.sahha-wa-bubble {
+  position: fixed;
+  inset-block-end: clamp(16px, 4vw, 28px);
+  inset-inline-end: clamp(16px, 4vw, 28px);
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  padding: .7rem 1.05rem .7rem .8rem;
+  border-radius: var(--r-pill);
+  background: #25D366;
+  color: #fff;
+  font-family: var(--font-body-family);
+  font-weight: 700;
+  font-size: .92rem;
+  text-decoration: none;
+  box-shadow: var(--brand-shadow);
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.sahha-wa-bubble:hover { transform: translateY(-2px); box-shadow: var(--brand-shadow-lg); }
+.sahha-wa-bubble svg { width: 26px; height: 26px; flex: none; }
+.sahha-wa-bubble .label { white-space: nowrap; }
+@media (max-width: 600px) {
+  .sahha-wa-bubble .label { display: none; }
+  .sahha-wa-bubble { padding: .7rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sahha-wa-bubble { transition: none; }
+}

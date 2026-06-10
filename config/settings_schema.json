@@ -8,6 +8,34 @@
     "theme_support_url": "https://support.shopify.com/"
   },
   {
+    "name": "Sahha Daily",
+    "settings": [
+      {
+        "type": "header",
+        "content": "WhatsApp"
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_number",
+        "label": "WhatsApp number (with country code)",
+        "info": "e.g. 96170000000 — leave blank to hide the floating bubble.",
+        "default": "96170000000"
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_label",
+        "label": "Bubble label",
+        "default": "Chat on WhatsApp"
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_message",
+        "label": "Prefilled message",
+        "default": "Hi Sahha Daily! 🌿 I have a question"
+      }
+    ]
+  },
+  {
     "name": "t:settings_schema.logo.name",
     "settings": [
       {

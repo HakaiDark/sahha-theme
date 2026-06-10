@@ -121,6 +121,10 @@
                               width: settings.brand_image_width
                           }}
                         </div>
+                      {%- else -%}
+                        <a href="{{ routes.root_url }}" class="footer__sahha-wordmark-link">
+                          {% render 'sahha-wordmark', tag: 'span' %}
+                        </a>
                       {%- endif -%}
                       {%- if settings.brand_headline != blank -%}
                         <h2 class="footer-block__heading rte">{{ settings.brand_headline }}</h2>
