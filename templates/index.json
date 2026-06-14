@@ -21,7 +21,7 @@
       "settings": {
         "title": "The everyday essentials",
         "heading_size": "h2",
-        "description": "The formulas our customers reach for most.",
+        "description": "<p>The formulas our customers reach for most.<\/p>",
         "show_description": true,
         "collection": "all",
         "products_to_show": 8,
@@ -37,6 +37,16 @@
         "columns_mobile": "2",
         "padding_top": 56,
         "padding_bottom": 56
+      }
+    },
+    "sahha_routine_finder": {
+      "type": "sahha-routine-finder",
+      "settings": {
+        "kicker": "Find your routine",
+        "heading": "<p>Shop by <em>wellness goal.</em></p>",
+        "subtext": "Tell us what you’re working toward and we’ll point you to the right products.",
+        "cta_label": "Shop this routine",
+        "color_scheme": "scheme-2"
       }
     },
     "collection_list": {
@@ -69,6 +79,18 @@
         "color_scheme": "scheme-3"
       }
     },
+    "sahha_routine_bundles": {
+      "type": "sahha-routine-bundles",
+      "settings": {
+        "kicker": "Curated stacks",
+        "heading": "<p>Ready-made <em>routines.</em></p>",
+        "subtext": "Hand-picked combinations our panel reaches for — a simpler way to start.",
+        "show_add_all": true,
+        "add_label": "Add routine to cart",
+        "view_label": "View products",
+        "color_scheme": "scheme-3"
+      }
+    },
     "sahha_who_we_are": {
       "type": "sahha-who-we-are",
       "blocks": {
@@ -89,8 +111,10 @@
   "order": [
     "sahha_hero",
     "featured_collection",
+    "sahha_routine_finder",
     "collection_list",
     "sahha_experts",
+    "sahha_routine_bundles",
     "sahha_who_we_are"
   ]
 }

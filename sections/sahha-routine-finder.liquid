@@ -1,0 +1,87 @@
+{%- comment -%}
+  Sahha Daily routine finder — goal-based entry into the shop. Reads every
+  `wellness_goal` metaobject and renders a card per goal that links to the
+  all-products collection pre-filtered on that goal (Search & Discovery's
+  `custom.wellness_goals` metaobject filter).
+
+  Renders nothing until the metaobjects exist (Phase 1), except for an
+  editor-only hint in the theme editor.
+{%- endcomment -%}
+
+{%- liquid
+  assign goals = shop.metaobjects.wellness_goal.values
+-%}
+
+{%- if goals.size > 0 -%}
+<section class="sahha-section sahha-rf color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}">
+  <div class="sahha-wrap">
+    <div class="sahha-intro">
+      {%- if section.settings.kicker != blank -%}<span class="sahha-kicker center">{{ section.settings.kicker }}</span>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2 class="sahha-h-lg">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.subtext != blank -%}<p class="sahha-lead" style="margin-inline:auto">{{ section.settings.subtext }}</p>{%- endif -%}
+    </div>
+
+    <div class="sahha-rf__grid">
+      {%- for goal in goals -%}
+        {%- liquid
+          assign label = goal.label.value
+          assign short = goal.short_label.value | default: label
+          assign desc = goal.description.value
+        -%}
+        <a class="sahha-rf__card" href="{{ routes.all_products_collection_url }}?filter.p.m.custom.wellness_goals={{ goal.system.id | url_encode }}">
+          <span class="sahha-rf__short">{{ short }}</span>
+          <span class="sahha-rf__label">{{ label }}</span>
+          {%- if desc != blank -%}<span class="sahha-rf__desc">{{ desc }}</span>{%- endif -%}
+          <span class="sahha-rf__go">
+            {{ section.settings.cta_label | default: 'Shop this routine' }}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{%- elsif request.design_mode -%}
+  <div class="sahha-rf__hint">
+    Routine finder — one card per <code>wellness_goal</code> metaobject. It appears once
+    you create those entries (Phase 1, §D) and install Search &amp; Discovery with a
+    <code>custom.wellness_goals</code> filter.
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+.sahha-rf { background-color: rgb(var(--color-background)); }
+.sahha-rf__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px,2vw,24px); }
+.sahha-rf__card { position: relative; display: flex; flex-direction: column; gap: 8px; padding: clamp(24px,2.6vw,36px); border-radius: var(--r-lg); background: var(--paper-2); border: 1px solid var(--line); text-decoration: none; overflow: hidden; transition: box-shadow .5s var(--ease), transform .5s var(--ease); }
+.sahha-rf__card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: linear-gradient(90deg, var(--green), var(--sage)); }
+.sahha-rf__card:hover { box-shadow: var(--brand-shadow-lg); transform: translateY(-3px); }
+.sahha-rf__short { font-family: var(--font-heading-family); font-weight: 900; font-size: 1.4rem; color: var(--ink); }
+.sahha-rf__label { color: var(--green); font-weight: 700; font-size: .92rem; }
+.sahha-rf__desc { color: var(--muted); font-size: .88rem; line-height: 1.55; margin-top: 2px; }
+.sahha-rf__go { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; color: var(--accent); font-weight: 800; font-size: .86rem; transition: gap .3s var(--ease); }
+.sahha-rf__card:hover .sahha-rf__go { gap: 12px; }
+.sahha-rf__hint { max-width: 720px; margin: 24px auto; padding: 18px 22px; border: 1px dashed var(--line-2); border-radius: var(--r-md); background: var(--tint-cream); color: var(--muted); font-size: .9rem; line-height: 1.6; }
+.sahha-rf__hint code { background: rgba(0,0,0,.05); padding: 1px 5px; border-radius: 5px; }
+@media (max-width: 989px) { .sahha-rf__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .sahha-rf__grid { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) {
+  .sahha-rf__card, .sahha-rf__go { transition: none; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sahha Routine Finder",
+  "tag": "section",
+  "class": "sahha-rf-wrapper",
+  "settings": [
+    { "type": "paragraph", "content": "Auto-builds a card for every wellness_goal metaobject, linking to the goal-filtered shop. Create the metaobjects first (see migration Phase 1, §D)." },
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "Find your routine" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Shop by <em>wellness goal.</em></p>" },
+    { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "Tell us what you’re working toward and we’ll point you to the right products." },
+    { "type": "text", "id": "cta_label", "label": "Card link label", "default": "Shop this routine" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-2" }
+  ],
+  "presets": [{ "name": "Sahha Routine Finder" }]
+}
+{% endschema %}

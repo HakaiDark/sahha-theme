@@ -1,0 +1,124 @@
+{%- comment -%}
+  Sahha Daily routine bundles — curated product stacks. Reads every
+  `routine_bundle` metaobject (title, eyebrow, description, products list) and
+  renders a card per bundle with its products and an optional "add all to cart"
+  form (shown only when every product in the bundle is purchasable).
+
+  Renders nothing until the metaobjects exist (Phase 1), except for an
+  editor-only hint in the theme editor.
+{%- endcomment -%}
+
+{%- liquid
+  assign bundles = shop.metaobjects.routine_bundle.values
+-%}
+
+{%- if bundles.size > 0 -%}
+<section class="sahha-section sahha-rb color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}">
+  <div class="sahha-wrap">
+    <div class="sahha-intro">
+      {%- if section.settings.kicker != blank -%}<span class="sahha-kicker center">{{ section.settings.kicker }}</span>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2 class="sahha-h-lg">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.subtext != blank -%}<p class="sahha-lead" style="margin-inline:auto">{{ section.settings.subtext }}</p>{%- endif -%}
+    </div>
+
+    <div class="sahha-rb__grid">
+      {%- for bundle in bundles -%}
+        {%- liquid
+          assign products = bundle.products.value
+          assign buyable = true
+          for prod in products
+            unless prod.available
+              assign buyable = false
+            endunless
+          endfor
+        -%}
+        <div class="sahha-rb__card">
+          <div class="sahha-rb__head">
+            {%- if bundle.eyebrow.value != blank -%}<span class="sahha-rb__eyebrow">{{ bundle.eyebrow.value }}</span>{%- endif -%}
+            <h3 class="sahha-rb__title">{{ bundle.title.value }}</h3>
+            {%- if bundle.description.value != blank -%}<p class="sahha-rb__desc">{{ bundle.description.value }}</p>{%- endif -%}
+          </div>
+
+          {%- if products != blank -%}
+            <ul class="sahha-rb__items">
+              {%- for prod in products -%}
+                <li>
+                  <a class="sahha-rb__item" href="{{ prod.url }}">
+                    <span class="sahha-rb__thumb">
+                      {%- if prod.featured_image != blank -%}
+                        {{ prod.featured_image | image_url: width: 120 | image_tag: loading: 'lazy', widths: '60,120', alt: prod.title | escape }}
+                      {%- else -%}
+                        {{ 'product-1' | placeholder_svg_tag: 'sahha-rb__ph' }}
+                      {%- endif -%}
+                    </span>
+                    <span class="sahha-rb__item-tx">
+                      <span class="sahha-rb__item-name">{{ prod.title }}</span>
+                      {%- if prod.price > 0 -%}<span class="sahha-rb__item-price">{{ prod.price | money }}</span>{%- endif -%}
+                    </span>
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+
+            {%- if buyable and section.settings.show_add_all -%}
+              <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="sahha-rb__form">
+                {%- for prod in products -%}
+                  <input type="hidden" name="items[{{ forloop.index0 }}][id]" value="{{ prod.selected_or_first_available_variant.id }}">
+                  <input type="hidden" name="items[{{ forloop.index0 }}][quantity]" value="1">
+                {%- endfor -%}
+                <button type="submit" class="sahha-btn accent full"><span>{{ section.settings.add_label | default: 'Add routine to cart' }}</span></button>
+              </form>
+            {%- else -%}
+              <a class="sahha-btn ghost full" href="{{ products.first.url }}"><span>{{ section.settings.view_label | default: 'View products' }}</span></a>
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{%- elsif request.design_mode -%}
+  <div class="sahha-rb__hint">
+    Routine bundles — one card per <code>routine_bundle</code> metaobject (title, eyebrow,
+    description, products). It appears once you create those entries (Phase 1, §D).
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+.sahha-rb { background-color: rgb(var(--color-background)); }
+.sahha-rb__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px,2vw,28px); align-items: start; }
+.sahha-rb__card { display: flex; flex-direction: column; padding: clamp(24px,2.6vw,34px); border-radius: var(--r-lg); background: var(--paper-2); border: 1px solid var(--line); box-shadow: var(--brand-shadow-sm); }
+.sahha-rb__eyebrow { display: inline-block; color: var(--accent); font-weight: 900; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+.sahha-rb__title { font-family: var(--font-heading-family); font-weight: 800; font-size: clamp(1.2rem,1.7vw,1.5rem); color: var(--ink); margin: 0; }
+.sahha-rb__desc { color: var(--muted); font-size: .9rem; line-height: 1.6; margin: 10px 0 0; }
+.sahha-rb__items { list-style: none; margin: 20px 0; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); display: grid; gap: 12px; }
+.sahha-rb__item { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.sahha-rb__thumb { flex: none; width: 52px; height: 52px; border-radius: var(--r-sm); overflow: hidden; background: var(--tint-mint); display: grid; place-items: center; }
+.sahha-rb__thumb img, .sahha-rb__thumb svg { width: 100%; height: 100%; object-fit: cover; }
+.sahha-rb__item-tx { display: flex; flex-direction: column; gap: 2px; }
+.sahha-rb__item-name { color: var(--ink); font-weight: 600; font-size: .92rem; line-height: 1.3; }
+.sahha-rb__item-price { color: var(--green); font-weight: 800; font-size: .85rem; }
+.sahha-rb__form { margin-top: auto; }
+.sahha-rb__hint { max-width: 720px; margin: 24px auto; padding: 18px 22px; border: 1px dashed var(--line-2); border-radius: var(--r-md); background: var(--tint-cream); color: var(--muted); font-size: .9rem; line-height: 1.6; }
+.sahha-rb__hint code { background: rgba(0,0,0,.05); padding: 1px 5px; border-radius: 5px; }
+@media (max-width: 989px) { .sahha-rb__grid { grid-template-columns: 1fr; max-width: 520px; margin-inline: auto; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sahha Routine Bundles",
+  "tag": "section",
+  "class": "sahha-rb-wrapper",
+  "settings": [
+    { "type": "paragraph", "content": "Auto-builds a card for every routine_bundle metaobject. Create the metaobjects first (see migration Phase 1, §D). 'Add routine to cart' shows only when every product in a bundle is purchasable (priced + in stock)." },
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "Curated stacks" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Ready-made <em>routines.</em></p>" },
+    { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "Hand-picked combinations our panel reaches for — a simpler way to start." },
+    { "type": "checkbox", "id": "show_add_all", "label": "Show “add all to cart” button", "default": true },
+    { "type": "text", "id": "add_label", "label": "Add-all button label", "default": "Add routine to cart" },
+    { "type": "text", "id": "view_label", "label": "Fallback button label", "default": "View products" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-3" }
+  ],
+  "presets": [{ "name": "Sahha Routine Bundles" }]
+}
+{% endschema %}

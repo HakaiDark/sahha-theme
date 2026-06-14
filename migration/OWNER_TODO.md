@@ -9,6 +9,7 @@ These steps need an interactive Shopify login / admin access, so they can't be a
 ## ✅ Already done (by Claude, in code)
 - Dawn theme branded to Sahha Daily (colors, Cairo/Tajawal fonts, two-tone wordmark, WhatsApp bubble).
 - Custom homepage sections built: Hero, Experts panel (+ bio modal), Who We Are.
+- **Phase 4 built**: product page reads the `custom.*` metafields (key features, benefits, why-use, how-to-use, nutrition, ingredients, safety, notes, rating stars, "fits these routines" chips); shop/collection cards show the `custom.badge` marketing badge; **Routine Finder** (goal cards → filtered shop) + **Routine Bundles** (curated stacks) homepage sections, both driven by the metaobjects. All degrade gracefully — they stay hidden until the data exists, so they're safe to ship now.
 - Phase 1 import file + guide generated (see below).
 
 ---
@@ -38,8 +39,12 @@ These steps need an interactive Shopify login / admin access, so they can't be a
 
 ---
 
-## 👉 When you finish Phase 0 + Phase 1, tell Claude
-Then Claude builds **Phase 4** (product + shop/collection templates that read these metafields) and the **routine finder + routine bundles** homepage sections (that read the metaobjects). The homepage Featured/Categories sections populate automatically once products + collections exist.
+## 👉 Phase 4 is already built — here's what makes it light up
+- **Product pages**: fill each product's `custom.*` metafields (the import CSV does this) → the "Sahha Product Details" section renders them automatically.
+- **Marketing badge on cards**: set `custom.badge` (e.g. "Best seller") → shows top-left on shop/collection cards.
+- **Routine Finder + the PDP "fits these routines" chips**: need the `wellness_goal` metaobjects (Phase 1 §D) **and** Search & Discovery with a `custom.wellness_goals` filter installed — the chips/cards link to `/collections/all?filter.p.m.custom.wellness_goals=…`, which only filters once that app's filter exists.
+- **Routine Bundles**: need the `routine_bundle` metaobjects (Phase 1 §D). "Add routine to cart" only appears once every product in a bundle is priced + in stock; otherwise it falls back to a "View products" link.
+- Homepage Featured/Categories sections populate automatically once products + collections exist.
 
 ## Notes
 - `migration/` is git-tracked but excluded from theme pushes via `.shopifyignore` — it never goes to the live store.

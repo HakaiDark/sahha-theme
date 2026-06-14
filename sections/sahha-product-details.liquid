@@ -1,0 +1,209 @@
+{%- comment -%}
+  Sahha Daily product detail band — renders the long-form `custom.*` metafields
+  imported from the catalog (see migration/PHASE1_DATA_IMPORT.md). Lives on the
+  product template, so the global `product` object is available here.
+
+  Every block renders only when its metafield has content, so this section is
+  safe before the catalog import has run (it simply disappears).
+{%- endcomment -%}
+
+{%- liquid
+  assign m = product.metafields.custom
+  assign rating = m.rating.value
+  assign reviews = m.review_count.value
+  assign goals = m.wellness_goals.value
+  assign key_features = m.key_features.value
+  assign benefits = m.benefits.value
+  assign why_use = m.why_use.value
+  assign nutrition = m.nutrition.value
+
+  assign has_content = false
+  if rating or goals != blank or key_features != blank or benefits != blank or why_use != blank or nutrition != blank or m.how_to_use.value != blank or m.ingredients.value != blank or m.safety.value != blank or m.notes.value != blank
+    assign has_content = true
+  endif
+-%}
+
+{%- if has_content -%}
+<section class="sahha-section sahha-pd color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}">
+  <div class="sahha-wrap">
+
+    {%- comment -%} ── Highlights band ── {%- endcomment -%}
+    {%- if rating or goals != blank or key_features != blank -%}
+      <div class="sahha-pd__highlights">
+        {%- if rating or key_features != blank -%}
+          <div class="sahha-pd__lead">
+            {%- if rating -%}
+              {%- assign filled = rating | round -%}
+              <div class="sahha-pd__rating" role="img" aria-label="Rated {{ rating }} out of 5">
+                <span class="sahha-pd__stars" aria-hidden="true">
+                  {%- for i in (1..5) -%}<span class="{% if i <= filled %}on{% endif %}">★</span>{%- endfor -%}
+                </span>
+                <span class="sahha-pd__rating-tx">
+                  <b>{{ rating }}</b>{% if reviews %} <span>· {{ reviews }} reviews</span>{% endif %}
+                </span>
+              </div>
+            {%- endif -%}
+
+            {%- if key_features != blank -%}
+              <ul class="sahha-pd__keys">
+                {%- for feature in key_features -%}
+                  <li>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>{{ feature }}</span>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if goals != blank -%}
+          <div class="sahha-pd__goals">
+            <span class="sahha-pd__goals-label">{{ section.settings.goals_heading | default: 'Fits these routines' }}</span>
+            <div class="sahha-pd__chips">
+              {%- for goal in goals -%}
+                <a class="sahha-pd__chip" href="{{ routes.all_products_collection_url }}?filter.p.m.custom.wellness_goals={{ goal.system.id | url_encode }}">
+                  {{ goal.short_label.value | default: goal.label.value }}
+                </a>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} ── Detail cards ── {%- endcomment -%}
+    <div class="sahha-pd__grid">
+
+      {%- if benefits != blank -%}
+        <div class="sahha-pd__card">
+          <h2 class="sahha-pd__h">{{ section.settings.benefits_heading | default: 'Benefits' }}</h2>
+          <ul class="sahha-pd__list">
+            {%- for item in benefits -%}<li>{{ item }}</li>{%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      {%- if why_use != blank -%}
+        <div class="sahha-pd__card">
+          <h2 class="sahha-pd__h">{{ section.settings.why_heading | default: 'Why use it' }}</h2>
+          <ul class="sahha-pd__list">
+            {%- for item in why_use -%}<li>{{ item }}</li>{%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      {%- if m.how_to_use.value != blank -%}
+        <div class="sahha-pd__card">
+          <h2 class="sahha-pd__h">{{ section.settings.how_heading | default: 'How to use' }}</h2>
+          <p class="sahha-pd__text">{{ m.how_to_use.value | newline_to_br }}</p>
+        </div>
+      {%- endif -%}
+
+      {%- if nutrition != blank -%}
+        <div class="sahha-pd__card">
+          <h2 class="sahha-pd__h">{{ section.settings.nutrition_heading | default: 'Nutritional information' }}</h2>
+          <dl class="sahha-pd__nutri">
+            {%- for row in nutrition -%}
+              {%- assign label = row | split: ': ' | first -%}
+              {%- assign value = row | remove_first: label | remove_first: ': ' -%}
+              <div class="sahha-pd__nutri-row">
+                <dt>{{ label }}</dt>
+                {%- if value != blank -%}<dd>{{ value }}</dd>{%- endif -%}
+              </div>
+            {%- endfor -%}
+          </dl>
+        </div>
+      {%- endif -%}
+
+      {%- if m.ingredients.value != blank -%}
+        <div class="sahha-pd__card">
+          <h2 class="sahha-pd__h">{{ section.settings.ingredients_heading | default: 'Ingredients' }}</h2>
+          <p class="sahha-pd__text">{{ m.ingredients.value | newline_to_br }}</p>
+        </div>
+      {%- endif -%}
+
+      {%- if m.safety.value != blank -%}
+        <div class="sahha-pd__card sahha-pd__card--note">
+          <h2 class="sahha-pd__h">{{ section.settings.safety_heading | default: 'Safety' }}</h2>
+          <p class="sahha-pd__text">{{ m.safety.value | newline_to_br }}</p>
+        </div>
+      {%- endif -%}
+
+      {%- if m.notes.value != blank -%}
+        <div class="sahha-pd__card sahha-pd__card--note">
+          <h2 class="sahha-pd__h">{{ section.settings.notes_heading | default: 'Good to know' }}</h2>
+          <p class="sahha-pd__text">{{ m.notes.value | newline_to_br }}</p>
+        </div>
+      {%- endif -%}
+
+    </div>
+  </div>
+</section>
+{%- elsif request.design_mode -%}
+  <div class="sahha-pd__hint">
+    Sahha product details — this section shows the product’s <code>custom.*</code> metafields
+    (key features, benefits, nutrition, ingredients, safety, routines). It appears once the
+    product has those metafields filled in (Phase 1 import).
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+.sahha-pd { background-color: rgb(var(--color-background)); }
+.sahha-pd__highlights { display: grid; grid-template-columns: 1.5fr 1fr; gap: clamp(24px,3vw,52px); align-items: start; padding-bottom: clamp(28px,3vw,44px); margin-bottom: clamp(28px,3vw,44px); border-bottom: 1px solid var(--line); }
+.sahha-pd__rating { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.sahha-pd__stars { letter-spacing: 2px; font-size: 1.05rem; color: var(--line-2); }
+.sahha-pd__stars .on { color: var(--accent); }
+.sahha-pd__rating-tx b { color: var(--ink); font-weight: 800; }
+.sahha-pd__rating-tx span { color: var(--muted); font-size: .9rem; }
+.sahha-pd__keys { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.sahha-pd__keys li { display: flex; gap: 12px; align-items: flex-start; color: var(--ink-soft); font-weight: 500; line-height: 1.5; }
+.sahha-pd__keys svg { color: var(--green); flex: none; margin-top: 2px; }
+.sahha-pd__goals-label { display: block; font-size: .72rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.sahha-pd__chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.sahha-pd__chip { display: inline-flex; align-items: center; padding: 9px 16px; border-radius: var(--r-pill); background: var(--tint-green); border: 1px solid var(--line); color: var(--green); font-weight: 700; font-size: .85rem; text-decoration: none; transition: background .3s var(--ease), color .3s var(--ease); }
+.sahha-pd__chip:hover { background: var(--green); color: #fff; }
+.sahha-pd__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(16px,2vw,26px); }
+.sahha-pd__card { padding: clamp(22px,2.4vw,34px); border-radius: var(--r-lg); background: var(--paper-2); border: 1px solid var(--line); }
+.sahha-pd__card--note { background: var(--tint-peach); border-color: var(--accent-soft); }
+.sahha-pd__h { font-family: var(--font-heading-family); font-weight: 800; font-size: clamp(1.1rem,1.6vw,1.35rem); color: var(--ink); margin: 0 0 16px; }
+.sahha-pd__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.sahha-pd__list li { position: relative; padding-left: 20px; color: var(--ink-soft); line-height: 1.6; }
+.sahha-pd__list li::before { content: ""; position: absolute; left: 0; top: .62em; width: 7px; height: 7px; border-radius: 50%; background: var(--sage); }
+.sahha-pd__text { color: var(--ink-soft); line-height: 1.7; margin: 0; }
+.sahha-pd__nutri { margin: 0; display: grid; gap: 0; }
+.sahha-pd__nutri-row { display: flex; justify-content: space-between; gap: 16px; padding: 11px 0; border-bottom: 1px dashed var(--line); }
+.sahha-pd__nutri-row:last-child { border-bottom: 0; }
+.sahha-pd__nutri dt { color: var(--ink-soft); font-weight: 600; }
+.sahha-pd__nutri dd { margin: 0; color: var(--green); font-weight: 800; text-align: right; }
+.sahha-pd__hint { max-width: 720px; margin: 24px auto; padding: 18px 22px; border: 1px dashed var(--line-2); border-radius: var(--r-md); background: var(--tint-cream); color: var(--muted); font-size: .9rem; line-height: 1.6; }
+.sahha-pd__hint code { background: rgba(0,0,0,.05); padding: 1px 5px; border-radius: 5px; }
+@media (max-width: 749px) {
+  .sahha-pd__highlights { grid-template-columns: 1fr; }
+  .sahha-pd__grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sahha-pd__chip { transition: none; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sahha Product Details",
+  "tag": "section",
+  "class": "sahha-pd-wrapper",
+  "settings": [
+    { "type": "paragraph", "content": "Renders the product's custom.* metafields (key features, benefits, why use, how to use, nutrition, ingredients, safety, notes, rating, wellness goals). Each block appears only when its metafield has content." },
+    { "type": "text", "id": "goals_heading", "label": "Routines label", "default": "Fits these routines" },
+    { "type": "text", "id": "benefits_heading", "label": "Benefits heading", "default": "Benefits" },
+    { "type": "text", "id": "why_heading", "label": "Why-use heading", "default": "Why use it" },
+    { "type": "text", "id": "how_heading", "label": "How-to-use heading", "default": "How to use" },
+    { "type": "text", "id": "nutrition_heading", "label": "Nutrition heading", "default": "Nutritional information" },
+    { "type": "text", "id": "ingredients_heading", "label": "Ingredients heading", "default": "Ingredients" },
+    { "type": "text", "id": "safety_heading", "label": "Safety heading", "default": "Safety" },
+    { "type": "text", "id": "notes_heading", "label": "Notes heading", "default": "Good to know" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "Sahha Product Details" }]
+}
+{% endschema %}

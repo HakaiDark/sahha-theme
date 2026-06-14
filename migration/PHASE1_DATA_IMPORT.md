@@ -1,10 +1,10 @@
 # Phase 1 — Catalog data into Shopify (field map + checklist)
 
-**For:** the Dawn theme at `../sahha-theme`. Do these in the Shopify **admin** (most can't be done from the CLI). Once done, the homepage's Featured/Categories sections and the Phase 4 product/shop templates light up.
+**For:** this Dawn theme (`sahha-theme/`). Do these in the Shopify **admin** (most can't be done from the CLI). The theme code that reads this data (**Phase 4** — product page, shop-card badges, routine finder, routine bundles) is **already built**, so each step below makes a part of the storefront light up automatically.
 
 Two ready-made artifacts (in this repo):
 - **`shopify-products-import.v2.csv`** — all 14 products with Body HTML + every long-form field as `custom.*` metafields, ready to import.
-- **`scripts/gen-shopify-import.mjs`** — regenerates that CSV from `src/data/products.ts` if the catalog changes (`node scripts/gen-shopify-import.mjs > shopify-products-import.v2.csv`).
+- **`gen-shopify-import.mjs`** — regenerates that CSV from `data/products.ts` if the catalog changes (from inside `migration/`: `node gen-shopify-import.mjs > shopify-products-import.v2.csv`).
 
 ---
 
@@ -19,7 +19,7 @@ Two ready-made artifacts (in this repo):
 | `format` | metafield `custom.format` | also a **Tag** → enables a format filter |
 | `price` | **Variant Price** | ⚠️ blank in CSV — **you set real prices** (was "TBA") |
 | `quantity` | **Variant Inventory Qty** | ⚠️ blank in CSV — **you set real stock** |
-| `image` | Product image | upload the `public/products/immersive/*.webp` packshot per product (CSV `Image Src` is blank — Shopify can't read local paths) |
+| `image` | Product image | upload the `migration/product-images/*.webp` packshot per product — files are named `NN-<sku>-<slug>.webp` (CSV `Image Src` is blank — Shopify can't read local paths) |
 | `description` | **Body (HTML)** | short intro paragraph |
 | `keyFeatures[]` | `custom.key_features` (list.single_line) | |
 | `benefits[]` | `custom.benefits` (list.single_line) | |
@@ -43,7 +43,7 @@ All `custom.*` metafields are auto-created on first import **except** define the
 ## B. Import the products
 
 1. Admin → **Products → Import** → upload `shopify-products-import.v2.csv` → *Overwrite existing products with same handle*.
-2. After import, open each product and **upload its packshot** from `public/products/immersive/` (filenames are `NN-<sku>-<slug>.webp`).
+2. After import, open each product and **upload its packshot** from `migration/product-images/` (filenames are `NN-<sku>-<slug>.webp`).
 3. Set **Price** and **Inventory** on each (or do a bulk edit). Until priced, keep WhatsApp as the buy path.
 4. Spot-check one product's **Metafields** section shows the lists/benefits/nutrition.
 
@@ -90,7 +90,7 @@ Entries (handle = the id):
 | `bones-joints` | Bones, joints and active living | Joints |
 | `family` | Family gummies | Family |
 
-(descriptions are in `src/data/merchandising.ts`.)
+(descriptions are in `data/merchandising.ts`.)
 
 ### Definition 2 — `routine_bundle`
 Fields:
@@ -130,8 +130,15 @@ On the `wellness_goals` product metafield (list of `wellness_goal` references), 
 
 ---
 
-## E. Enable filtering (Phase 4 prep)
-Install the free **Search & Discovery** app → add filters from `custom.wellness_goals` and `custom.format` (+ price, availability). This is what replaces the old client-side `ShopFilters` with zero code.
+## E. Enable filtering (required for the routine finder)
+Install the free **Search & Discovery** app → add filters from `custom.wellness_goals` and `custom.format` (+ price, availability). This replaces the old client-side `ShopFilters` with zero code. **This is not optional for the routine experience:** the homepage Routine Finder cards and the product-page "fits these routines" chips link to `/collections/all?filter.p.m.custom.wellness_goals=…`, which only actually filters once this app's `custom.wellness_goals` filter exists.
 
-## F. When this is done, tell me
-I'll wire the metaobjects into the **routine finder** + **routine bundles** sections and build the **Phase 4 product + shop templates** that read these metafields. The homepage Featured/Categories sections will already be populated.
+## F. What lights up as you finish each step (Phase 4 is already built)
+The theme code is done and waiting — no further build step from me is required. Each data step above turns on a part of the storefront automatically:
+- **Products imported + metafields filled** → the "Sahha Product Details" section renders key features, benefits, why-use, how-to-use, nutrition, ingredients, safety, notes, and rating stars.
+- **`custom.badge` set** → the marketing badge ("Best seller" etc.) shows on shop/collection cards.
+- **`wellness_goal` metaobjects created + Search & Discovery filter installed (§D, §E)** → the homepage **Routine Finder** and the PDP "fits these routines" chips work.
+- **`routine_bundle` metaobjects created (§D)** → the homepage **Routine Bundles** section appears; its "add all to cart" button shows once every product in a bundle is priced + in stock.
+- **Collections created** → the homepage Featured/Categories sections populate.
+
+Until then, every one of these sections stays hidden (safe to ship). If you want a visual tweak after seeing it live, that's the only thing left for me.
