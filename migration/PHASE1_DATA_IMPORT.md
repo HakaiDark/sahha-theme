@@ -47,6 +47,16 @@ All `custom.*` metafields are auto-created on first import **except** define the
 3. Set **Price** and **Inventory** on each (or do a bulk edit). Until priced, keep WhatsApp as the buy path.
 4. Spot-check one product's **Metafields** section shows the lists/benefits/nutrition.
 
+### ⚠️ Import gotchas (learned the hard way 2026-06-15 — the v2 CSV now handles all three)
+Shopify's **current** product importer is pickier than the legacy docs suggest. All three were silently breaking the import until fixed in `gen-shopify-import.mjs`:
+1. **Price cannot be blank.** A blank `Variant Price` makes Shopify reject the **entire row** ("Validation failed: Price can't be blank") — including its metafields. The generator now writes a **`0.00` placeholder** (products stay non-orderable: stock 0 + policy `deny`). ➜ **Setting real prices in Step 1.4 is now mandatory before launch.**
+2. **Metafield column headers must be the parenthesized format** `Display name (product.metafields.custom.key)` — the exact form an admin **Export** produces. The legacy `Metafield: custom.key [type]` syntax is **silently ignored** (no error, just no data). Type comes from the **definition**, so the definitions must exist first (see §A — we can no longer skip Step 1.1).
+3. **List metafields = newline-separated values** in the cell (one item per line), **not** a JSON array. A JSON array gets stored as a single blob. Verified by hand-entering a list and re-exporting.
+
+**To rediscover the right format for any field:** create the definition, enter one value by hand in admin, **Export all products**, and read how Shopify wrote that cell — then match it in the generator.
+
+**Definitions are NOT auto-created on import** on this store — create all 13 by hand first (Settings → Custom data → Products), matching the names/keys/types in §A. The 4 list fields (key_features, benefits, why_use, nutrition) must be **"List of values"**, not "One value".
+
 ---
 
 ## C. Collections (categories → zero-code shop filters)

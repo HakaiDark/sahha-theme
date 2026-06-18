@@ -131,6 +131,8 @@
 .sahha-experts__card:hover .sahha-experts__readbio { gap: 12px; }
 /* modal */
 .sahha-experts__modal { position: fixed; inset: 0; z-index: 330; display: grid; place-items: center; }
+/* The `hidden` attr must win over the display above, or the (invisible) modal overlays the page and eats clicks. */
+.sahha-experts__modal[hidden] { display: none; }
 .sahha-experts__overlay { position: absolute; inset: 0; background: rgba(24,33,27,0.55); backdrop-filter: blur(5px); opacity: 0; transition: opacity .4s var(--ease); }
 .sahha-experts__dialog { position: relative; width: min(540px, 92vw); max-height: 88vh; overflow-y: auto; background: var(--paper-2); border-radius: var(--r-xl); box-shadow: var(--brand-shadow-lg); padding: clamp(26px,4vw,40px); transform: translateY(14px) scale(.96); opacity: 0; transition: opacity .4s var(--ease), transform .45s var(--ease); }
 .sahha-experts__modal.is-open .sahha-experts__overlay { opacity: 1; }

@@ -1,11 +1,16 @@
 # Sahha Daily — Project Status & Roadmap
 
-_The single "where are we" file. Last updated: 2026-06-12._
+_The single "where are we" file. Last updated: 2026-06-15._
 
-This is the Sahha Daily storefront, a **Dawn 15.4.1** Shopify theme (Liquid) branded
-to the Sahha palette + Cairo/Tajawal fonts. The old Next.js site is being retired.
+Sahha Daily storefront — a **Dawn 15.4.1** Shopify theme (Liquid) branded to the Sahha
+palette + Cairo/Tajawal fonts. Store: **`sahhadaily.myshopify.com`** (free Partner dev
+store). The old Next.js site is being retired.
 
-Legend: ✅ done · 🔵 your turn (needs Shopify admin login — only you can do it) · ⚪ my turn (theme code).
+Legend: ✅ done · 🔵 owner (needs Shopify admin) · ⚪ Claude (theme code).
+
+**We are working through Phase 1 ONE owner-step at a time, in maximum detail** (owner
+does each admin step, replies "done", then gets the next). **Phase 1 COMPLETE** (all of 1.1–1.8 done).
+Next position: **end-to-end storefront preview**, then Phase 5 (Arabic/RTL) / Phase 6 (launch).
 
 ---
 
@@ -13,108 +18,132 @@ Legend: ✅ done · 🔵 your turn (needs Shopify admin login — only you can d
 
 | Phase | What | Status |
 |---|---|---|
-| 2 | Brand skin (colors, fonts, wordmark, WhatsApp bubble) | ✅ done & committed |
-| 3 | Custom homepage sections (hero, experts, who-we-are) | ✅ done & committed |
-| 0 | Store setup + local preview | 🔵 your turn |
-| 1 | Get the catalog into Shopify (products, collections, metaobjects) | 🔵 your turn |
-| 4 | Product page + shop cards + routine finder/bundles | ✅ built ⚪ **not committed yet** |
-| 5 | Bilingual (Arabic / RTL) | ⚪ later (after you add the locale) |
+| 2 | Brand skin (colors, fonts, wordmark, WhatsApp bubble) | ✅ done, committed, pushed |
+| 3 | Custom homepage sections (hero, experts, who-we-are) | ✅ done, committed, pushed |
+| 4 | Product page + shop-card badge + routine finder/bundles | ✅ done, committed, pushed |
+| 0 | Store setup (currency/market/payments/shipping) | ✅ **done** |
+| 1 | Get the catalog into Shopify | ✅ **DONE — all of 1.1–1.8 complete** |
+| 5 | Bilingual (Arabic / RTL) | ⚪ later (after owner adds the locale) |
 | 6 | Launch (test order, domain, go live) | 🔵 later |
 
-> Phases 2/3/4 (the **theme code**) are mostly done. Phases 0/1 (the **data**) are the
-> gate — most things stay invisible until your catalog exists in Shopify. They can run
-> in parallel: the code is already written and waiting for the data.
+---
+
+## ✅ Done so far
+
+**Theme code (Phases 2–4)** — all committed and on GitHub, and pushed to the store as an
+unpublished theme named **"Sahha Daily"**.
+- Phase 2: `assets/sahha-brand.css` (brand tokens, Cairo/Tajawal), two-tone wordmark, WhatsApp bubble.
+- Phase 3: `sections/sahha-hero|sahha-experts|sahha-who-we-are.liquid`.
+- Phase 4: `sections/sahha-product-details.liquid` (reads `product.metafields.custom.*`),
+  `snippets/sahha-card-badge.liquid` (+ card-product edits, `custom.badge`),
+  `sections/sahha-routine-finder.liquid` (wellness_goal metaobjects),
+  `sections/sahha-routine-bundles.liquid` (routine_bundle metaobjects). Wired into
+  `templates/product.json` + `templates/index.json`. **All degrade gracefully** — hidden
+  until the data exists, so safe already on the store.
+
+**GitHub** — repo `HakaiDark/sahha-theme` (**private**). Inherited Dawn maintainer CI was
+removed; slimmed to a single **Theme Check** workflow (`.github/workflows/ci.yml`, with
+`checks: write` permission) that is **green**. The 2 pre-existing Dawn `icon_with_text`
+schema-translation errors were fixed in `locales/en.default.schema.json`. Dependabot PR
+closed. Push via GitHub Desktop (origin is connected; local commits can also be pushed by
+Claude if the owner approves the master push).
+
+**Phase 0 — store** (all in admin):
+- Business entity switched **Germany → Lebanon / Individual** (this required deactivating
+  Shopify Payments — fine: not used, COD only, and Shopify Payments isn't available in
+  Lebanon anyway).
+- Currency **USD**, store address + timezone **Lebanon/Beirut**.
+- **Cash on Delivery (COD)** active (PayPal/Shopify Payments off).
+- **Lebanon shipping zone** with a flat rate. (Local delivery left off — optional.)
+- `shopify theme dev --store sahhadaily.myshopify.com` works for local preview.
+
+**Phase 1 — Step 1.1 (metafield definitions): DONE by hand.** We *tried* to skip this (betting
+the CSV `[type]` headers would auto-create the defs) — they DON'T on this store, so the import
+loaded zero metafields until we created all 13 `custom.*` definitions manually (Settings → Custom
+data → Products). The 4 list fields are "List of values". `custom.wellness_goals` (metaobject ref)
+is still created later, in Step 1.6.
+
+**Phase 1 — Step 1.2 (import 14 products): DONE.** Took several rounds to crack Shopify's current
+importer — see the "Import gotchas" box in `PHASE1_DATA_IMPORT.md`. Three fixes baked into the v2
+CSV / generator: (1) `Variant Price` = `0.00` placeholder (blank price rejects the whole row);
+(2) metafield headers in the parenthesized `Name (product.metafields.custom.key)` export-format (the
+`Metafield: …[type]` syntax is silently ignored); (3) list metafields newline-separated, not JSON
+arrays. All 14 products now carry full, correctly-structured metafields. Price still `0.00` + stock
+0/`deny` → not orderable until Step 1.4.
 
 ---
 
-## ✅ Already done (committed to git)
+## 🔵 Phase 1 — remaining owner steps (detail in `PHASE1_DATA_IMPORT.md`)
 
-**Phase 2 — brand skin**
-- All 5 Dawn color schemes → Sahha palette. `assets/sahha-brand.css` holds brand tokens +
-  Cairo (headings) / Tajawal (body) fonts. Two-tone صحة/دايلي wordmark. WhatsApp bubble.
+- [x] **1.2 — Import products. DONE.** 14 products imported with full metafields. Re-import
+      anytime with the same file (overwrite by handle). Price=`0.00` placeholder; Image blank (1.3).
+- [x] **1.3 — Upload the 14 images. DONE.** Packshots from `migration/product-images/` attached to each product.
+- [x] **1.4 — Set Price + Inventory. DONE.** Real prices set via bulk editor. **Track quantity left
+      UNTICKED** (owner's choice, for testing) → all products always-available; on-hand numbers entered
+      but dormant until tracking is turned on later. Price > 0 ⇒ orderable.
+- [x] **1.5 — Create collections. DONE.** 8 smart collections by Product type (counts sum to 14)
+      + built-in `all`. (Default `frontpage`/"Home page" collection left untouched — theme doesn't use it.)
+- [ ] **1.6 — Create metaobjects** (split into 3 parts — see "Resume here"):
+      - **A.** `wellness_goal` def (type `wellness_goal`; fields `label`/`short_label`/`description`) + 6 entries. **DONE.**
+      - **B.** `routine_bundle` def (type `routine_bundle`; fields `title`/`eyebrow`/`description`/`products` = Product list) + 3 entries. **DONE.**
+      - **C.** Define the `custom.wellness_goals` product metafield (Metaobject ref → Wellness goal, **list**). **DONE.** (Used dedicated Metaobject reference, NOT "mixed reference" — mixed isn't reliably filterable in Search & Discovery. All 6 wellness_goal entries Active; a stale "5" count in the def view is cosmetic.)
+- [x] **1.7 — Tag products with goals. DONE.** 13 products tagged via bulk editor (Berberine left
+      empty by design); all 6 goals confirmed visible in the picker.
+- [x] **1.8 — Install Search & Discovery. DONE.** Filters live: Availability, Price, Wellness goals,
+      Format. Routine Finder + PDP goal chips now actually filter the shop.
 
-**Phase 3 — homepage sections**
-- `sahha-hero`, `sahha-experts` (with bio modal), `sahha-who-we-are` — all editable in the
-  theme editor. Homepage order set in `templates/index.json`.
+## 💡 Later ideas (owner-flagged)
+- **Add a 7th wellness goal for Berberine** (CC0530, the lone "Heart and Liver" product, currently
+  has NO goal — deliberately, the 6 goals don't cover heart/liver/metabolic). Owner wants a goal like
+  *"Heart, liver & metabolic"* (short label "Metabolic"/"Heart"); consider also tagging Omega-3 (CC0350).
+  **Zero code** — Routine Finder auto-builds a card per `wellness_goal` entry; just add the metaobject
+  entry + tag products. Flagged 2026-06-17.
 
-**Migration kit** (in `migration/`, git-tracked but never pushed to the store)
-- `shopify-products-import.v2.csv` (14 products), `PHASE1_DATA_IMPORT.md` (the detailed
-  data guide), `OWNER_TODO.md` (your checklist), product images, source data.
+## 🐞 Fixed during preview (2026-06-18)
+- **Experts bio modal was overlaying the whole site & blocking all clicks.** `.sahha-experts__modal`
+  set `display:grid` unconditionally, which overrode the HTML `hidden` attribute (author CSS beats the
+  UA `[hidden]{display:none}` rule) → all 3 invisible (opacity:0) full-screen modals sat on top of the
+  page eating clicks, each with an "Ask … on WhatsApp" button. Fix: added
+  `.sahha-experts__modal[hidden] { display:none; }` in `sections/sahha-experts.liquid`. Pushed to store
+  theme #192337019213.
+- **Routine Finder cards + PDP "fits these routines" chips all hit "No products found".** The links built
+  the filter value from `goal.system.id`, which returns the **bare numeric id** (e.g. `340538884429`), but
+  Search & Discovery's metaobject filter needs the **full GID** `gid://shopify/Metaobject/<id>`. Fix: wrap
+  it — `{{ 'gid://shopify/Metaobject/' | append: goal.system.id | url_encode }}` — in
+  `sections/sahha-routine-finder.liquid` + `sections/sahha-product-details.liquid`. Verified filtering live.
+- **All three fixes pushed to store theme #192337019213; NOT yet committed to git** (owner to approve a master commit).
 
----
-
-## ✅ Built but ⚪ NOT committed yet — Phase 4 (my turn to commit)
-
-These 9 files are sitting in the working tree, fully working, `theme check` clean:
-
-- `sections/sahha-product-details.liquid` — product page reads every `custom.*` metafield
-  (key features, benefits, why-use, how-to-use, nutrition, ingredients, safety, notes,
-  rating stars, "fits these routines" chips). Wired into `templates/product.json`.
-- `snippets/sahha-card-badge.liquid` + edits to `snippets/card-product.liquid` — shows the
-  `custom.badge` ("Best seller" etc.) on shop/collection cards.
-- `sections/sahha-routine-finder.liquid` — "shop by wellness goal" cards (from the
-  `wellness_goal` metaobjects).
-- `sections/sahha-routine-bundles.liquid` — curated stacks (from the `routine_bundle`
-  metaobjects) with an "add all to cart" button.
-- Edits to `templates/index.json` (slotted the two new sections into the homepage + fixed a
-  pre-existing richtext upload error) and `assets/sahha-brand.css` (badge styling).
-
-**All of Phase 4 degrades gracefully** — every new section stays hidden until its data
-exists, so it's safe to push now and it "lights up" automatically as you do Phase 1.
-
-👉 **My immediate next step:** commit these once you say go (I left it uncommitted so you
-could decide). Just tell me "commit Phase 4."
-
----
-
-## 🔵 YOUR TURN — what only you can do (Shopify admin)
-
-### Phase 0 — store + preview
-- [ ] Have a Shopify store (a free **development store** is fine).
-- [ ] `shopify theme dev` → log in → preview at `http://127.0.0.1:9292`.
-- [ ] Admin settings: currency **USD**, **Lebanon** market, **Cash on Delivery / manual**
-      payment, **Lebanon** shipping zone.
-
-### Phase 1 — get the catalog in (detail in `PHASE1_DATA_IMPORT.md`)
-- [ ] **Import products:** Admin → Products → Import → `shopify-products-import.v2.csv`
-      → "Overwrite existing products with same handle".
-- [ ] **Upload images:** one packshot per product from `migration/product-images/`.
-- [ ] **Set Price + Inventory** on every product (CSV leaves these blank).
-- [ ] **Create collections:** one per category (8) + an all-products collection.
-- [ ] **Create metaobjects:** 6 `wellness_goal` + 3 `routine_bundle` (handles/values in
-      PHASE1 doc §D).
-- [ ] **Tag products with goals:** set each product's `custom.wellness_goals` (bulk editor,
-      SKU→goals table in PHASE1 doc).
-- [ ] **Install Search & Discovery** (free) → add filters from `custom.wellness_goals` and
-      `custom.format`. ← _the routine finder + PDP goal chips only actually filter once this exists._
-
-### Phase 5/6 — later
-- [ ] Install **Translate & Adapt** (free) → add **Arabic** locale (then I wire RTL behavior).
-- [ ] Test a Cash-on-Delivery order end to end.
-- [ ] Point the **domain** at Shopify; retire the old Netlify site after DNS propagates.
+## ⚪ Claude — left on the code side
+- After data is in + owner previews: any visual tweaks to product page / homepage.
+- Phase 5 (Arabic/RTL) once the locale is added.
+- Optional: real-reviews app instead of static `custom.rating`.
 
 ---
 
-## ⚪ MY TURN — what's left on the code side
+## ▶️ Resume here (Step 1.6, Part A — wellness_goal metaobject)
+Owner is creating the `wellness_goal` metaobject + 6 entries in admin (Settings → Custom data →
+Metaobjects). **Exact identifiers verified against theme code** (`sections/sahha-routine-finder.liquid`
+reads `shop.metaobjects.wellness_goal.values` → `goal.label.value`, `goal.short_label.value`,
+`goal.description.value`; links by `goal.system.id`):
+- Definition **type** must be exactly `wellness_goal`. Fields (keys): `label`, `short_label` (single line),
+  `description` (multi-line). Entry handles don't matter (theme links by internal id).
+- **6 entries** (Label · Short label · Description) — copy from `migration/data/merchandising.ts`
+  `wellnessGoals[]`: Daily energy and foundations·Energy, Immune support·Immunity, Beauty hair and skin·Beauty,
+  Calm focus and evening reset·Calm, Bones joints and active living·Joints, Family gummies·Family.
 
-1. **Commit Phase 4** (waiting on your go).
-2. **After you preview it live:** any visual tweaks you want on the product page / homepage.
-3. **Phase 5 — bilingual:** once you add the Arabic locale, I wire the RTL theme behavior +
-   Arabic wordmark (the wordmark already auto-switches on RTL).
-4. **Optional polish:** reviews-app hookup (real stars instead of the static `custom.rating`),
-   any extra sections you decide you want.
+**Then Part B** — `routine_bundle` metaobject (`sahha-routine-bundles.liquid` reads
+`shop.metaobjects.routine_bundle.values` → `bundle.title.value`, `bundle.eyebrow.value`,
+`bundle.description.value`, `bundle.products.value`): type `routine_bundle`; fields `title`, `eyebrow`
+(single line), `description` (multi-line), `products` (**Product list reference**). 3 entries from
+`merchandising.ts` `routineBundles[]` (daily-core, beauty-glow, active-mobility — SKUs in PHASE1 §D).
 
----
+**Then Part C** — define product metafield `custom.wellness_goals` = **List of `wellness_goal` references**
+(Settings → Custom data → Products → Add definition). Powers the Routine Finder filter + PDP goal chips.
 
-## How to think about the dependency
+After 1.6: **1.7** tag products→goals (PHASE1 §D table), **1.8** install Search & Discovery + add filters.
 
-```
-Phase 0 (store) ─┐
-                 ├─> Phase 1 (data) ──> everything in Phase 4 "lights up" automatically
-theme code ──────┘                      (product pages, badges, routine finder, bundles)
-(Phases 2/3/4 — already built)
-```
-
-The theme is ahead of the data on purpose. Nothing you do in code is blocked; the catalog
-import is the one thing that turns the lights on.
-```
+## Notes for resuming
+- Account *ownership* of the store may still be the German associate's — separate from the
+  business entity, doesn't block anything, handle at launch.
+- `migration/` is git-tracked but excluded from theme pushes via `.shopifyignore`.
+- Theme is ahead of the data on purpose — the catalog import is what "turns the lights on".

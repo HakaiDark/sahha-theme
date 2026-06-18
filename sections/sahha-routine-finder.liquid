@@ -28,7 +28,7 @@
           assign short = goal.short_label.value | default: label
           assign desc = goal.description.value
         -%}
-        <a class="sahha-rf__card" href="{{ routes.all_products_collection_url }}?filter.p.m.custom.wellness_goals={{ goal.system.id | url_encode }}">
+        <a class="sahha-rf__card" href="{{ routes.all_products_collection_url }}?filter.p.m.custom.wellness_goals={{ 'gid://shopify/Metaobject/' | append: goal.system.id | url_encode }}">
           <span class="sahha-rf__short">{{ short }}</span>
           <span class="sahha-rf__label">{{ label }}</span>
           {%- if desc != blank -%}<span class="sahha-rf__desc">{{ desc }}</span>{%- endif -%}

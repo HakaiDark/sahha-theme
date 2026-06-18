@@ -62,7 +62,7 @@
             <span class="sahha-pd__goals-label">{{ section.settings.goals_heading | default: 'Fits these routines' }}</span>
             <div class="sahha-pd__chips">
               {%- for goal in goals -%}
-                <a class="sahha-pd__chip" href="{{ routes.all_products_collection_url }}?filter.p.m.custom.wellness_goals={{ goal.system.id | url_encode }}">
+                <a class="sahha-pd__chip" href="{{ routes.all_products_collection_url }}?filter.p.m.custom.wellness_goals={{ 'gid://shopify/Metaobject/' | append: goal.system.id | url_encode }}">
                   {{ goal.short_label.value | default: goal.label.value }}
                 </a>
               {%- endfor -%}
