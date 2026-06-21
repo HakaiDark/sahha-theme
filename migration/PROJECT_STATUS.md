@@ -1,6 +1,6 @@
 # Sahha Daily — Project Status & Roadmap
 
-_The single "where are we" file. Last updated: 2026-06-15._
+_The single "where are we" file. Last updated: 2026-06-21 (Phase 7: hero + header/nav ported)._
 
 Sahha Daily storefront — a **Dawn 15.4.1** Shopify theme (Liquid) branded to the Sahha
 palette + Cairo/Tajawal fonts. Store: **`sahhadaily.myshopify.com`** (free Partner dev
@@ -91,6 +91,83 @@ arrays. All 14 products now carry full, correctly-structured metafields. Price s
       empty by design); all 6 goals confirmed visible in the picker.
 - [x] **1.8 — Install Search & Discovery. DONE.** Filters live: Availability, Price, Wellness goals,
       Format. Routine Finder + PDP goal chips now actually filter the shop.
+
+## 🎨 Phase 7 — Design port: match the live site (IN PROGRESS, started 2026-06-18)
+**Goal:** make the Shopify theme match `www.sahhadaily.com` as closely as possible. Source of truth =
+the **live site** + the current `SahhaDaily` repo (`src/app/globals.css` — a complete "editorial botanical"
+design system). **Ignore project MD files for design decisions** (owner flagged them as possibly stale).
+**Owner decisions (2026-06-18):** headings → **Playfair Display** (Cairo for Arabic only); **full motion**
+(entrance/scroll animations + Lenis-style smooth scroll).
+
+Original system highlights to replicate: Playfair headings + big editorial type scale; warm ivory paper
+`#F4F0E6` + subtle paper-grain overlay; generous section padding; large radii/soft shadows; split-screen
+hero (floating product, halo, orbits); manifesto; pinned horizontal product showcase; marquee; stats;
+editorial product cards; sticky header w/ scroll states (logo image); custom cursor; preloader; reveal
+animations. (Leaf particles were REMOVED in their redesign — don't add.)
+
+### ⚠️ Two hard rules for this port (see memory [[design-port-sahha]])
+- **REM ×1.6:** Dawn root font = **10px** (`theme.liquid:231` `font-size: calc(var(--font-body-scale)*62.5%)`);
+  original site = **16px**. Every `rem` copied from `SahhaDaily/src/app/globals.css` must be **×1.6**; `vw`/`px` unchanged.
+- **NEVER push `config/settings_data.json`** — owner edits it via the customizer (logo, color schemes). Pushing wipes the logo.
+  Push code only with `--only <file>`. CLI: `HOMEBREW_NO_AUTO_UPDATE=1 /opt/homebrew/Cellar/shopify-cli/4.1.0/bin/shopify theme push --store sahhadaily.myshopify.com --theme 192337019213 --only <files>`.
+
+Progress:
+- [x] **Foundation (done, pushed)** — `assets/sahha-brand.css` + `layout/theme.liquid`: headings Cairo→**Playfair
+      Display 500** + editorial type scale (`.sahha-display/h-xl/h-lg/h-md`, now ×1.6-corrected so sizes match the
+      original), Title-Case headings (`text-transform: capitalize`), Playfair loaded, wordmark → Playfair italic 600,
+      tokens (paper `#F4F0E6`, radii 10/18/30/44, shadows, gutter, maxw), `.sahha-kicker/btn/wrap/section` sized to original.
+
+### 🎯 Owner feedback to address, section by section (2026-06-18 — owner cleared context after this)
+The owner wants the design built **section by section, matching the original exactly**, then fine-tuned. Specific issues raised:
+1. **Heading word-coloring missing.** Headings like "Premium Wellness Supplements" render the first words **black** (`--ink`)
+   instead of **green**. The original colors specific words green/orange via spans (`.green`/`.accent`/`.it`). Our generic
+   `text-transform`/heading rule has no per-word color — each section's heading markup needs colored spans like the original.
+2. **Body text color wrong on light + dark.** Body copy isn't the right tone; on dark-green sections it should be **ivory/paper
+   (`#F4F0E6`)** but isn't. Check each section's color-scheme + custom CSS (some hardcode `--ink`).
+3. **"Find your routine" (routine finder) background too dark.** It defaults to `scheme-2` (`#1C3C2A` green-deep). The original's
+   finder uses a lighter green — change the section's background/scheme to match (likely `#2E5B3F` herbal green or a mint tint).
+4. (Earlier) ivory page bg is `#F6F2E9`; true value `#F4F0E6` — owner to fix in customizer (Theme settings → Colors), since we can't push settings_data.json.
+
+### ✅ DONE so far in the port (2026-06-19/21, committed)
+- **Hero — DONE & pushed.** Rebuilt `sections/sahha-hero.liquid` to match the LIVE `.hx-*` hero (orbs + floating
+  product + one rating pill — NOT the stale `.hero-*` block with orbits/halo/stats). Title now **green** (owner #1),
+  Playfair **500**, all rems **×1.6**, wide wrap **1560px** (was wrongly 1360 → fixed text position). Heading/tagline are
+  `inline_richtext` (italic word → orange via `em`/`.it`). **Product rotation:** optional "Rotate product images from"
+  collection cross-fades product images (owner set it to **health-and-wellness**); degrades to single image/placeholder.
+  **Image-consistency finding:** all 14 packshots are already uniform (square, product 940px/94% tall, centred 50/50);
+  only #07 calcium is 1500² but same ratio. So do NOT resize individual packshots — they already match. (I wrongly shrank
+  Ashwagandha then reverted.) Bottle-body width varies ~5% naturally — that's fine, the live site has it too.
+- **Header / nav — DONE & pushed.** (a) New `sections/sahha-marquee.liquid` slim bilingual scrolling marquee, wired into
+  `layout/theme.liquid` just before `{% sections 'header-group' %}` (site-wide, above sticky header). (b) Restyled Dawn
+  header via CSS appended to `sahha-brand.css`: nav links uppercase/letter-spaced/ink + orange hover underline, header
+  bottom line + blurred-paper bg on scroll, **logo locked to 77px (65px scrolled), left-aligned**, grid overridden to
+  **logo left · nav centered · icons right**. (c) Removed Dawn's "Welcome to our store" announcement bar by trimming
+  `sections/header-group.json` to just the header section (pulled live first to preserve settings; country/language
+  selector survives — it's on the header, not the bar).
+- ⚠️ **Push gotcha learned:** `shopify theme push --only <file>` can report "success" but silently NOT upload (it happened
+  to the hero, blanking the whole section). **Always round-trip verify**: pull the file back to /tmp and diff. The
+  `--only` flag also only honours the LAST occurrence on `pull` (repeat-flag pulls just the last file).
+
+### ▶️ RESUME HERE (next session): continue the section-by-section port, in this order
+For each: read the matching component/CSS in `SahhaDaily` (live site = source of truth), rebuild the Liquid section markup +
+its `{% stylesheet %}` with ×1.6 rem, colored heading spans, correct scheme, push that file, **round-trip verify**, then have owner preview.
+1. **Product cards** (NEXT) — Dawn `snippets/card-product.liquid` + brand CSS vs original `.pcard*` (`globals.css` ~L343+): media bg, uppercase category, stars, price, hover.
+2. **Product page (PDP)** — `sections/sahha-product-details.liquid` + `templates/product.json` vs original `.pdx*` (~L760+).
+3. **Routine finder** (`sahha-routine-finder.liquid`) — fix bg too-dark (defaults `scheme-2` #1C3C2A; original lighter green) + match `.finder*` (~L387+).
+4. **Routine bundles, experts, who-we-are** — restyle to match.
+5. **Motion pass** — CSS reveals + Lenis-style smooth scroll (owner chose full motion); **paper-grain overlay**.
+Original design system reference: `SahhaDaily/src/app/globals.css`. Verify against `www.sahhadaily.com`. Push CLI in [[design-port-sahha]].
+- [x] **Hero** — done & pushed.
+- [x] **Header / nav** (marquee, restyle, logo 77px, welcome bar removed) — done & pushed.
+- [ ] **Product cards** (editorial: media bg, tag, stars, hover) — Dawn `card-product` + brand CSS.
+- [ ] **Product page (PDP)** layout to match original.
+- [ ] **Supporting sections**: experts, who-we-are, routine finder/bundles restyle.
+- [ ] **Motion pass** (CSS reveals + smooth scroll) + **grain overlay**.
+
+### 🎯 Still-open owner colour feedback (apply per-section as we go)
+- Body text tone on dark-green sections should be ivory `#F4F0E6` (some sections hardcode `--ink`).
+- Routine finder background too dark — lighten it.
+- Page bg should be `#F4F0E6` (was `#F6F2E9`) — owner fixes in customizer (can't push settings_data.json).
 
 ## 💡 Later ideas (owner-flagged)
 - **Add a 7th wellness goal for Berberine** (CC0530, the lone "Heart and Liver" product, currently

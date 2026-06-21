@@ -1,0 +1,54 @@
+{%- comment -%}
+  Sahha Daily marquee — ported from the live site's <Marquee>. A slim, infinitely
+  scrolling bilingual trust bar that sits above the header. Items are duplicated
+  once so the -50% translate loops seamlessly; the duplicate set is aria-hidden.
+
+  Edit the phrases below (one <span class="sahha-mq__item"> per phrase). Pause on
+  hover; animation disabled under prefers-reduced-motion. REM ×1.6 for Dawn's 10px
+  root (see memory design-port-sahha).
+{%- endcomment -%}
+
+{%- liquid
+  assign items = section.settings.items | default: '🌿 100% verified originals · بضاعة أصلية مضمونة|🇬🇧 Directly sourced from Europe · من أوروبا|🚚 Delivered to your door · توصيل لحد عندك|💬 Order on WhatsApp · اطلب على واتساب'
+  assign item_list = items | split: '|'
+-%}
+
+<div class="sahha-mq" role="region" aria-label="Store highlights">
+  <div class="sahha-mq__track">
+    {%- for item in item_list -%}
+      <span class="sahha-mq__item">{{ item }}<span class="sahha-mq__dot" aria-hidden="true"></span></span>
+    {%- endfor -%}
+    {%- comment -%} seamless-loop duplicate {%- endcomment -%}
+    {%- for item in item_list -%}
+      <span class="sahha-mq__item" aria-hidden="true">{{ item }}<span class="sahha-mq__dot"></span></span>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% stylesheet %}
+.sahha-mq { overflow: hidden; border-block: 1px solid var(--line); background: var(--paper-2); }
+.sahha-mq__track { display: flex; width: max-content; will-change: transform; animation: sahhaMq 28s linear infinite; }
+.sahha-mq:hover .sahha-mq__track { animation-play-state: paused; }
+.sahha-mq__item { display: inline-flex; align-items: center; gap: 18px; padding: 11px 0; font-family: var(--font-body-family); font-weight: 700; font-size: 1.312rem; letter-spacing: 0.04em; color: var(--green); white-space: nowrap; }
+.sahha-mq__dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); margin-inline: 18px; flex: none; }
+@keyframes sahhaMq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .sahha-mq__track { animation: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sahha Marquee",
+  "tag": "section",
+  "class": "sahha-marquee-section",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "items",
+      "label": "Marquee phrases",
+      "info": "Separate each phrase with a vertical bar  |  . Mix English and Arabic freely.",
+      "default": "🌿 100% verified originals · بضاعة أصلية مضمونة|🇬🇧 Directly sourced from Europe · من أوروبا|🚚 Delivered to your door · توصيل لحد عندك|💬 Order on WhatsApp · اطلب على واتساب"
+    }
+  ],
+  "presets": [{ "name": "Sahha Marquee" }]
+}
+{% endschema %}
