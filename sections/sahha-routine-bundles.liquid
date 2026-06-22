@@ -86,6 +86,8 @@
 
 {% stylesheet %}
 .sahha-rb { background-color: rgb(var(--color-background)); }
+/* span the same wide band (1560px) as the rest of the homepage sections */
+.sahha-rb .sahha-wrap { width: min(100% - 2 * var(--gutter), 1560px); }
 .sahha-rb__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px,2vw,28px); align-items: start; }
 .sahha-rb__card { display: flex; flex-direction: column; padding: clamp(24px,2.6vw,34px); border-radius: var(--r-lg); background: var(--paper-2); border: 1px solid var(--line); box-shadow: var(--brand-shadow-sm); }
 .sahha-rb__eyebrow { display: inline-block; color: var(--accent); font-weight: 900; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
