@@ -259,3 +259,189 @@ h1, h2, h3, h4, h5, h6,
   .header__heading-logo,
   .header__inline-menu .header__menu-item > span::after { transition: none; }
 }
+
+/* =============================================================
+   Product card — editorial ".pcard" (match www.sahhadaily.com)
+   Faithful port of the LIVE site CSS (.pcard*, V2 "soft"), used
+   by snippets/card-product.liquid. REM ×1.6 for Dawn's 10px root;
+   px / % / breakpoints unchanged. Tints rotate on .grid__item
+   (Dawn wraps each card) instead of .pcard:nth-child siblings.
+   See memory design-port-sahha.
+   ============================================================= */
+.pcard { position: relative; display: flex; flex-direction: column; height: 100%; }
+
+/* media frame — square, rounded, tinted, soft shadow */
+.pcard-media {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--tint-cream);
+  border: none;
+  box-shadow: var(--brand-shadow-sm);
+  display: grid;
+  place-items: center;
+  transition: box-shadow .5s var(--ease), transform .6s var(--ease);
+}
+.pcard:hover .pcard-media { box-shadow: 0 22px 54px -36px rgba(28, 60, 42, 0.34); }
+/* soft white halo behind the bottle */
+.pcard-media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.7), transparent 68%);
+  opacity: 1;
+}
+.pcard-media img {
+  position: relative;
+  z-index: 1;
+  width: 86%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 22px 26px rgba(28, 60, 42, 0.2));
+  transition: transform .6s var(--ease), filter .6s var(--ease);
+}
+/* image lifts/zooms on hover so the card reads as clickable */
+.pcard:hover .pcard-media img {
+  transform: scale(1.05);
+  filter: drop-shadow(0 26px 32px rgba(28, 60, 42, 0.26));
+}
+.pcard-media .placeholder-svg { width: 86%; height: auto; opacity: 0.4; }
+
+/* Home "everyday essentials" spans the live site's wide band (1560px = hero
+   width) instead of Dawn's narrower default page width, so it no longer looks
+   small/cramped against the hero. Scoped to .sahha-wide (featured-collection). */
+.sahha-wide .page-width,
+.sahha-wide .page-width-desktop { max-width: 1560px; }
+/* more vertical breathing room so it isn't crammed against the hero (live .sec ≈ 72–168px) */
+.sahha-wide > .collection {
+  padding-top: clamp(56px, 8vw, 96px);
+  padding-bottom: clamp(48px, 6vw, 80px);
+}
+
+/* tint rotation across the grid (live uses .pcard:nth-child; Dawn wraps in .grid__item) */
+.grid__item:nth-child(4n + 1) .pcard-media { background: var(--tint-mint); }
+.grid__item:nth-child(4n + 2) .pcard-media { background: var(--tint-peach); }
+.grid__item:nth-child(4n + 3) .pcard-media { background: var(--tint-cream); }
+.grid__item:nth-child(4n + 4) .pcard-media { background: var(--tint-sage); }
+
+/* whole-card link overlay (covers the full grid cell; clickable everywhere) */
+/* display:block + .pcard scope beats Dawn's base.css `a:empty { display:none }`,
+   which was hiding this empty overlay anchor and making the card unclickable. */
+.pcard .pcard-link { display: block; position: absolute; inset: 0; z-index: 4; }
+/* title is a real link too (keyboard / AT focus; fallback click target) */
+.pcard-titlelink { color: inherit; text-decoration: none; }
+.pcard:hover .pcard-titlelink { color: var(--green); }
+
+/* body */
+.pcard-body { padding: 18px 4px 0; display: flex; flex-direction: column; gap: 7px; }
+.pcard-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.pcard-cat {
+  font-family: var(--sans);
+  font-size: 1.088rem; /* .68rem ×1.6 */
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--olive);
+  font-weight: 800;
+}
+.pcard-cat--muted { color: var(--muted); }
+.pcard h3 {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 1.632rem; /* 1.02rem ×1.6 */
+  line-height: 1.32;
+  color: var(--ink);
+  margin: 0;
+  text-transform: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: calc(1.32em * 2);
+}
+
+/* rating row: stars · count · inline badge */
+.pcard .rrow { display: flex; align-items: center; gap: 8px; min-height: 26px; flex-wrap: wrap; }
+.stars {
+  position: relative;
+  display: inline-block;
+  font-size: 1.376rem; /* .86rem ×1.6 */
+  line-height: 1;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.stars-empty { color: rgba(46, 91, 63, 0.22); }
+.stars-fill { position: absolute; left: 0; top: 0; color: var(--accent); overflow: hidden; }
+.rcount { color: var(--muted); font-size: 1.28rem; font-weight: 600; } /* .8rem ×1.6 */
+
+/* inline badge (lives in the rating row, pushed right) */
+.tag {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 1.024rem; /* .64rem ×1.6 */
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.tag.inline { position: static; margin: 0; }
+.pcard .rrow .tag.inline { margin-left: auto; }
+.tag.bestSeller { background: var(--green); color: #fff; }
+.tag.popular { background: #fff; color: var(--green); border: 1px solid var(--line-2); }
+.tag.new { background: var(--accent); color: #fff; }
+.tag.lowStock { background: #B23A1E; color: #fff; }
+
+/* foot: price (green) · View → link */
+.pcard-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+.pcard-price {
+  font-size: 1.12rem; /* .7rem ×1.6 */
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green);
+  font-weight: 700;
+}
+.pcard .alink {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 1.312rem; /* .82rem ×1.6 */
+  font-weight: 700;
+  color: var(--green);
+  transition: gap .35s var(--ease);
+}
+.pcard .alink .ln { position: relative; }
+.pcard .alink .ln::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 1.5px;
+  width: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .4s var(--ease);
+}
+/* card hover drives the View link (the overlay link sits above the alink) */
+.pcard:hover .alink { gap: 14px; }
+.pcard:hover .alink .ln::after { transform: scaleX(1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pcard-media,
+  .pcard-media img,
+  .pcard .alink,
+  .pcard .alink .ln::after { transition: none; }
+  .pcard:hover .pcard-media img { transform: none; }
+}
+
+@media (max-width: 760px) {
+  .pcard .rcount { display: none; } /* keep stars + badge on one line on narrow cards */
+}
+@media (max-width: 460px) {
+  .pcard .rrow { gap: 6px; flex-wrap: nowrap; }
+  .pcard .stars { font-size: 1.184rem; letter-spacing: 0.5px; } /* .74rem ×1.6 */
+  .pcard .rrow .tag.inline { font-size: 0.864rem; padding: 5px 8px; letter-spacing: 0.05em; } /* .54rem ×1.6 */
+  .pcard-meta { flex-wrap: nowrap; gap: 6px; }
+  .pcard-meta .pcard-cat { font-size: 0.928rem; letter-spacing: 0.07em; white-space: nowrap; } /* .58rem ×1.6 */
+  .pcard-meta .pcard-cat:first-child { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+}

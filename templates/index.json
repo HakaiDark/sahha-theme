@@ -3,10 +3,11 @@
     "sahha_hero": {
       "type": "sahha-hero",
       "settings": {
-        "heading": "<p>Premium Wellness <em>Supplements</em></p>",
+        "heading": "Premium Wellness <em>Supplements</em>",
         "arabic_line": "صحتك بالديني",
         "tagline": "Daily support, better you 🌿",
         "subtext": "Premium wellness supplements for energy, beauty, immunity and active living, sourced from Europe and delivered to your door.",
+        "collection": "health-and-wellness",
         "rating_label": "4.8 rating",
         "reviews_label": "1,200+ reviews",
         "button_label": "Shop products",

@@ -1,6 +1,6 @@
 # Sahha Daily — Project Status & Roadmap
 
-_The single "where are we" file. Last updated: 2026-06-21 (Phase 7: hero + header/nav ported)._
+_The single "where are we" file. Last updated: 2026-06-21 (Phase 7: hero + header/nav + product cards ported)._
 
 Sahha Daily storefront — a **Dawn 15.4.1** Shopify theme (Liquid) branded to the Sahha
 palette + Cairo/Tajawal fonts. Store: **`sahhadaily.myshopify.com`** (free Partner dev
@@ -151,15 +151,47 @@ The owner wants the design built **section by section, matching the original exa
 ### ▶️ RESUME HERE (next session): continue the section-by-section port, in this order
 For each: read the matching component/CSS in `SahhaDaily` (live site = source of truth), rebuild the Liquid section markup +
 its `{% stylesheet %}` with ×1.6 rem, colored heading spans, correct scheme, push that file, **round-trip verify**, then have owner preview.
-1. **Product cards** (NEXT) — Dawn `snippets/card-product.liquid` + brand CSS vs original `.pcard*` (`globals.css` ~L343+): media bg, uppercase category, stars, price, hover.
-2. **Product page (PDP)** — `sections/sahha-product-details.liquid` + `templates/product.json` vs original `.pdx*` (~L760+).
+1. **Product cards — DONE & pushed (round-trip verified).** First tried a CSS retrofit of Dawn's `.card`
+   markup; owner flagged "size & structure different — check the live site." So I pulled the **live
+   deployed** HTML+CSS (`sahhadaily.com/shop` + `/_next/static/css/…`) — the real `.pcard` structure
+   differs from a plain restyle — and **rebuilt `snippets/card-product.liquid` to emit the live `.pcard`
+   markup directly** (dropping Dawn's card chrome/quick-add; live has none). Structure now matches exactly:
+   `.pcard` → `.pcard-media` (square, `--r-lg`, 4n tint rotation on `.grid__item`, 72% centered packshot
+   + drop-shadow + white halo, `--brand-shadow-sm` → hover shadow) · full-card `.pcard-link` overlay ·
+   `.pcard-body` → `.pcard-meta` (**two** cats: `product.type` olive + `custom.format` muted, space-between)
+   · `h3` (Tajawal 700, 2-line clamp) · `.rrow` (stars from `custom.rating`, `.rcount` from
+   `custom.review_count`, inline `.tag` badge from `custom.badge` mapped to bestSeller/popular/new/lowStock,
+   pushed right; sold-out → lowStock tag) · `.pcard-foot` (**owner chose Price + View →**: green
+   `.pcard-price` left, animated `.alink` "View →" right). CSS = faithful port of the live `.pcard*` rules
+   in `assets/sahha-brand.css`, **rem ×1.6**, px/%/breakpoints unchanged (incl. 760/460px responsive).
+   `snippets/sahha-card-badge.liquid` is now orphaned (logic inlined) — harmless OrphanedSnippet warning,
+   left in place. No add-to-cart on cards (matches live; PDP handles purchase).
+   **Owner feedback round 2–3 (2026-06-22) — RESOLVED & committed:**
+   - **Bottle/card not clickable — REAL root cause found via headless-Chrome `elementFromPoint` test:** Dawn's
+     `assets/base.css` `a:empty { display:none }` reset was hiding the EMPTY `.pcard-link` overlay anchor
+     (0×0, display:none) — so the image was the topmost element with no link. The earlier z-index/height
+     "fix" never worked because the anchor wasn't rendering at all. Fix: `.pcard .pcard-link { display:block; … }`
+     (specificity beats `a:empty` 0,1,1), made the overlay a real focusable link (`aria-label`, dropped
+     `aria-hidden`/`tabindex=-1`), title back to plain `<h3 class="pcard-titlelink">` (no nested 2nd link).
+     Verified in a real browser: topmost element over the bottle is now `A.pcard-link` → product URL.
+   - **Section smaller than hero — NOT a global page-width change.** Live `page.tsx` wraps the essentials grid
+     in `.wrap-wide` (1560px = hero band). Added class `sahha-wide` to the featured-collection root +
+     `.sahha-wide .page-width,.sahha-wide .page-width-desktop{max-width:1560px}` + roomier vertical padding via
+     `.sahha-wide > .collection`. Bottle image 72%→86% + hover zoom. (Global Page width left at 1200; no
+     settings_data.json push needed.)
+   - **Hero heading `<p>` blocker:** `index.json` hero heading was `<p>…</p>` in an inline_richtext setting →
+     blocked all `index.json` pushes + `theme dev` sync. Stripped the wrapper (richtext headings keep `<p>`).
+   - **⚠️ Incident:** pushing `index.json` clobbered the owner's customizer-set hero `collection`
+     (`health-and-wellness` rotation) → hero image vanished; restored by re-adding it to the hero settings.
+     Lesson: treat `templates/*.json` like `settings_data.json` — pull-first or change in customizer. See [[design-port-sahha]].
+2. **Product page (PDP) — NEXT** — `sections/sahha-product-details.liquid` + `templates/product.json` vs original `.pdx*`/`.pd-*` (~L760+).
 3. **Routine finder** (`sahha-routine-finder.liquid`) — fix bg too-dark (defaults `scheme-2` #1C3C2A; original lighter green) + match `.finder*` (~L387+).
 4. **Routine bundles, experts, who-we-are** — restyle to match.
 5. **Motion pass** — CSS reveals + Lenis-style smooth scroll (owner chose full motion); **paper-grain overlay**.
 Original design system reference: `SahhaDaily/src/app/globals.css`. Verify against `www.sahhadaily.com`. Push CLI in [[design-port-sahha]].
 - [x] **Hero** — done & pushed.
 - [x] **Header / nav** (marquee, restyle, logo 77px, welcome bar removed) — done & pushed.
-- [ ] **Product cards** (editorial: media bg, tag, stars, hover) — Dawn `card-product` + brand CSS.
+- [x] **Product cards** (editorial: media bg, tag, stars, hover) — Dawn `card-product` + brand CSS — done & pushed.
 - [ ] **Product page (PDP)** layout to match original.
 - [ ] **Supporting sections**: experts, who-we-are, routine finder/bundles restyle.
 - [ ] **Motion pass** (CSS reveals + smooth scroll) + **grain overlay**.
