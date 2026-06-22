@@ -102,6 +102,10 @@ h1, h2, h3, h4, h5, h6,
 .sahha-h-xl { font-family: var(--serif); font-weight: 500; line-height: .98; letter-spacing: -.012em; text-transform: capitalize; font-size: clamp(4.16rem, 6vw, 8.64rem); color: var(--green); }
 .sahha-h-lg { font-family: var(--serif); font-weight: 500; line-height: 1.02; letter-spacing: -.012em; text-transform: capitalize; font-size: clamp(3.36rem, 4.4vw, 6.4rem); color: var(--green); }
 .sahha-h-md { font-family: var(--serif); font-weight: 500; line-height: 1.05; letter-spacing: -.012em; text-transform: capitalize; font-size: clamp(2.56rem, 3vw, 4.16rem); color: var(--green); }
+/* italic word in these headings goes accent-orange → half green / half orange
+   (matches featured/categories; covers experts, who-we-are, routine-bundles) */
+.sahha-display em, .sahha-display i, .sahha-h-xl em, .sahha-h-xl i,
+.sahha-h-lg em, .sahha-h-lg i, .sahha-h-md em, .sahha-h-md i { color: var(--accent); font-style: italic; }
 .sahha-lead { font-size: clamp(1.68rem, 1.5vw, 2.11rem); color: var(--ink-soft); line-height: 1.66; max-width: 60ch; font-weight: 500; }
 .sahha-accent { color: var(--accent); }
 .sahha-it { font-style: italic; }

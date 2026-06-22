@@ -87,6 +87,7 @@
       },
       "block_order": ["v1", "v2", "v3"],
       "settings": {
+        "image": "shopify://shop_images/who-we-are.png",
         "kicker": "Who we are",
         "heading": "<p>A family-led <em>wellness brand.</em></p>",
         "subtext": "Our goal is to bring trusted European wellness products closer to customers in Lebanon, based in West Bekaa, Al Qaraoun.",
