@@ -59,7 +59,29 @@
           {%- endif -%}
         </div>
 
-        <h3 class="pcard-titlelink">{{ card_product.title | escape }}</h3>
+        {%- comment -%}
+          Split the title at the first number so the product name shows green and the
+          spec (dose / count / form, e.g. "500mg 120 Capsules") shows accent-orange.
+        {%- endcomment -%}
+        {%- assign sahha_name = '' -%}
+        {%- assign sahha_spec = '' -%}
+        {%- assign sahha_in_spec = false -%}
+        {%- assign sahha_title_words = card_product.title | split: ' ' -%}
+        {%- for sahha_w in sahha_title_words -%}
+          {%- assign sahha_fc = sahha_w | slice: 0, 1 -%}
+          {%- if sahha_in_spec == false and '0123456789' contains sahha_fc -%}
+            {%- assign sahha_in_spec = true -%}
+          {%- endif -%}
+          {%- if sahha_in_spec -%}
+            {%- assign sahha_spec = sahha_spec | append: ' ' | append: sahha_w -%}
+          {%- else -%}
+            {%- assign sahha_name = sahha_name | append: ' ' | append: sahha_w -%}
+          {%- endif -%}
+        {%- endfor -%}
+        <h3 class="pcard-titlelink">
+          <span class="pcard-name">{{ sahha_name | strip | escape }}</span>
+          {%- if sahha_spec != blank %} <span class="pcard-spec">{{ sahha_spec | strip | escape }}</span>{% endif -%}
+        </h3>
 
         <div class="rrow">
           {%- assign sahha_rating = card_product.metafields.custom.rating.value -%}
@@ -106,15 +128,6 @@
           </span>
           <span class="alink" aria-hidden="true">
             <span class="ln">{{ 'products.product.view_full_details' | t | split: ' ' | first }}</span>
-            <svg viewBox="0 0 24 24" fill="none" width="15" height="15">
-              <path
-                d="M5 12h14M13 6l6 6-6 6"
-                stroke="currentColor"
-                stroke-width="1.7"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></path>
-            </svg>
           </span>
         </div>
       </div>
