@@ -118,6 +118,8 @@
 
 {% stylesheet %}
 .sahha-experts { background-color: rgb(var(--color-background)); }
+/* span the same wide band (1560px) as the hero/featured/categories sections above */
+.sahha-experts .sahha-wrap { width: min(100% - 2 * var(--gutter), 1560px); }
 .sahha-experts__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px,2vw,30px); }
 .sahha-experts__card { text-align: left; cursor: pointer; position: relative; padding: clamp(28px,2.6vw,40px); border-radius: var(--r-lg); background: var(--paper-2); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; overflow: hidden; transition: box-shadow .5s var(--ease), transform .5s var(--ease); }
 .sahha-experts__card:hover { box-shadow: var(--brand-shadow-lg); transform: translateY(-3px); }
