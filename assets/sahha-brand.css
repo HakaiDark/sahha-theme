@@ -98,10 +98,10 @@ h1, h2, h3, h4, h5, h6,
    original site's root is 16px. So every rem taken from SahhaDaily/globals.css is
    ×1.6 here to render at the SAME pixel size. vw values are root-independent → unchanged.
    (e.g. original .display clamp(3.1rem,10vw,11rem) → ×1.6 on the rem bounds below.) */
-.sahha-display { font-family: var(--serif); font-weight: 500; line-height: .92; letter-spacing: -.02em; text-transform: capitalize; font-size: clamp(4.96rem, 10vw, 17.6rem); color: var(--ink); margin: 0; overflow-wrap: break-word; }
-.sahha-h-xl { font-family: var(--serif); font-weight: 500; line-height: .98; letter-spacing: -.012em; text-transform: capitalize; font-size: clamp(4.16rem, 6vw, 8.64rem); color: var(--ink); }
-.sahha-h-lg { font-family: var(--serif); font-weight: 500; line-height: 1.02; letter-spacing: -.012em; text-transform: capitalize; font-size: clamp(3.36rem, 4.4vw, 6.4rem); color: var(--ink); }
-.sahha-h-md { font-family: var(--serif); font-weight: 500; line-height: 1.05; letter-spacing: -.012em; text-transform: capitalize; font-size: clamp(2.56rem, 3vw, 4.16rem); color: var(--ink); }
+.sahha-display { font-family: var(--serif); font-weight: 500; line-height: .92; letter-spacing: -.02em; text-transform: capitalize; font-size: clamp(4.96rem, 10vw, 17.6rem); color: var(--green); margin: 0; overflow-wrap: break-word; }
+.sahha-h-xl { font-family: var(--serif); font-weight: 500; line-height: .98; letter-spacing: -.012em; text-transform: capitalize; font-size: clamp(4.16rem, 6vw, 8.64rem); color: var(--green); }
+.sahha-h-lg { font-family: var(--serif); font-weight: 500; line-height: 1.02; letter-spacing: -.012em; text-transform: capitalize; font-size: clamp(3.36rem, 4.4vw, 6.4rem); color: var(--green); }
+.sahha-h-md { font-family: var(--serif); font-weight: 500; line-height: 1.05; letter-spacing: -.012em; text-transform: capitalize; font-size: clamp(2.56rem, 3vw, 4.16rem); color: var(--green); }
 .sahha-lead { font-size: clamp(1.68rem, 1.5vw, 2.11rem); color: var(--ink-soft); line-height: 1.66; max-width: 60ch; font-weight: 500; }
 .sahha-accent { color: var(--accent); }
 .sahha-it { font-style: italic; }
