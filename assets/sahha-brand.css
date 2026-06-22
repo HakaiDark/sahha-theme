@@ -59,6 +59,9 @@
 /* Belt-and-suspenders: ensure the brand families win even where
    Dawn hardcodes the family off the settings object. */
 body { font-family: var(--font-body-family); }
+/* Dawn fades body text to 75% opacity; the live site uses solid ink — match it
+   so copy reads as crisp as the original (the "colors not on par" fix). */
+body { color: rgb(var(--color-foreground)); }
 h1, h2, h3, h4, h5, h6,
 .h0, .h1, .h2, .h3, .h4, .h5,
 .title, .product__title, .banner__heading,
