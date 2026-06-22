@@ -1,6 +1,6 @@
 # Sahha Daily — Project Status & Roadmap
 
-_The single "where are we" file. Last updated: 2026-06-21 (Phase 7: hero + header/nav + product cards ported)._
+_The single "where are we" file. Last updated: 2026-06-22 (Phase 7: HOMEPAGE COMPLETE — all sections + footer. Next: motion pass, then PDP)._
 
 Sahha Daily storefront — a **Dawn 15.4.1** Shopify theme (Liquid) branded to the Sahha
 palette + Cairo/Tajawal fonts. Store: **`sahhadaily.myshopify.com`** (free Partner dev
@@ -184,17 +184,23 @@ its `{% stylesheet %}` with ×1.6 rem, colored heading spans, correct scheme, pu
    - **⚠️ Incident:** pushing `index.json` clobbered the owner's customizer-set hero `collection`
      (`health-and-wellness` rotation) → hero image vanished; restored by re-adding it to the hero settings.
      Lesson: treat `templates/*.json` like `settings_data.json` — pull-first or change in customizer. See [[design-port-sahha]].
-2. **Product page (PDP) — NEXT** — `sections/sahha-product-details.liquid` + `templates/product.json` vs original `.pdx*`/`.pd-*` (~L760+).
-3. **Routine finder** (`sahha-routine-finder.liquid`) — fix bg too-dark (defaults `scheme-2` #1C3C2A; original lighter green) + match `.finder*` (~L387+).
-4. **Routine bundles, experts, who-we-are** — restyle to match.
-5. **Motion pass** — CSS reveals + Lenis-style smooth scroll (owner chose full motion); **paper-grain overlay**.
-Original design system reference: `SahhaDaily/src/app/globals.css`. Verify against `www.sahhadaily.com`. Push CLI in [[design-port-sahha]].
-- [x] **Hero** — done & pushed.
-- [x] **Header / nav** (marquee, restyle, logo 77px, welcome bar removed) — done & pushed.
-- [x] **Product cards** (editorial: media bg, tag, stars, hover) — Dawn `card-product` + brand CSS — done & pushed.
-- [ ] **Product page (PDP)** layout to match original.
-- [ ] **Supporting sections**: experts, who-we-are, routine finder/bundles restyle.
-- [ ] **Motion pass** (CSS reveals + smooth scroll) + **grain overlay**.
+**✅ HOMEPAGE COMPLETE (2026-06-22).** All sections ported + polished + footer. Verified font-for-font against www.sahhadaily.com in headless Chrome.
+Original design system reference: `SahhaDaily/src/app/globals.css`. Push CLI in [[design-port-sahha]].
+- [x] **Hero** — done.
+- [x] **Header / nav** (marquee, restyle, logo, welcome bar removed) — done.
+- [x] **Product cards** (editorial `.pcard`, click fix, split-colour titles, uniform image box, stars) — done.
+- [x] **Featured "everyday essentials"** — 1560 band, kicker + green/orange heading, more row spacing.
+- [x] **Shop by category** — NEW `sahha-categories.liquid` (replaced routine finder); tiles from real collections, name green / count orange.
+- [x] **Experts** — widened, names green, headings half green/half orange, ×1.6 text fix.
+- [x] **Routine bundles** — KEPT (owner), widened, titles green + product specs orange, ×1.6 fix.
+- [x] **Who-we-are** — widened, value text orange, Arabic half green/half orange, bg `#F1E9DA`, image uploaded + preserved in index.json.
+- [x] **Footer** — NEW `sahha-footer.liquid` (replaced Dawn footer); brand + Explore + Get-in-touch (locations/WhatsApp/IG), flows into who-we-are (no margin).
+- [x] Global: headings green base + orange `<em>`; body text solid; all section text ×1.6.
+
+### ▶️ RESUME HERE — what's left
+1. **Motion pass** — CSS scroll-reveal animations + **paper-grain overlay** (owner chose full motion). Dawn's `scroll-trigger`/`animate--*` already fire; add the brand reveal feel + grain.
+2. **Product page (PDP)** — `sections/sahha-product-details.liquid` + `templates/product.json` vs original `.pdx*`/`.pd-*` (~globals L760+). ⚠️ still has the ×1.6 miss (fix like the other sections) + needs the gallery: featured = `immersive/` packshot, then `gallery/<cc>/02-09.webp` via Admin API (skip `01`). Pull `sahhadaily.com/product/<handle>` markup first.
+3. **Small/optional:** verify white logo shows in footer brand column on the real theme; owner may want footer bottom bar bare (just "@SahhaDaily", no ©); delete orphaned `sections/sahha-routine-finder.liquid`.
 
 ### 🎯 Still-open owner colour feedback (apply per-section as we go)
 - Body text tone on dark-green sections should be ivory `#F4F0E6` (some sections hardcode `--ink`).
