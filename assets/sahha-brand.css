@@ -318,6 +318,37 @@ h1, h2, h3, h4, h5, h6,
   padding-top: clamp(56px, 8vw, 96px);
   padding-bottom: clamp(48px, 6vw, 80px);
 }
+/* Header → centered editorial "intro" (kicker · colored heading · lead),
+   matching the live site's <Reveal className="intro"> block. */
+.sahha-wide .collection__title {
+  max-width: 64ch;
+  margin-inline: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sahha-wide .collection__title .sahha-kicker { margin-bottom: 18px; }
+.sahha-wide .collection__title .title {
+  font-family: var(--serif);
+  font-weight: 500;
+  color: var(--green);
+  margin: 0;
+  font-size: clamp(3.36rem, 4.4vw, 6.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.012em;
+}
+/* the italicised word ("essentials") goes accent-orange, like the original */
+.sahha-wide .collection__title .title em,
+.sahha-wide .collection__title .title i { color: var(--accent); font-style: italic; }
+.sahha-wide .collection__title .collection__description {
+  margin: 16px 0 0;
+  color: var(--ink-soft);
+  font-size: clamp(1.68rem, 1.5vw, 2.11rem);
+  line-height: 1.66;
+  font-weight: 500;
+}
+.sahha-wide .collection__title .collection__description p { margin: 0; }
 
 /* tint rotation across the grid (live uses .pcard:nth-child; Dawn wraps in .grid__item) */
 .grid__item:nth-child(4n + 1) .pcard-media { background: var(--tint-mint); }

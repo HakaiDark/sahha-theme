@@ -146,14 +146,20 @@
             {%- if settings.logo != blank -%}
               <div class="header__heading-logo-wrapper">
                 {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
-                {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
-                {% capture sizes %}(max-width: {{ settings.logo_width | times: 2 }}px) 50vw, {{ settings.logo_width }}px{% endcapture %}
-                {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
+                {%- comment -%}
+                  The logo is CSS-sized to 7.7rem (77px) tall with width:auto (see sahha-brand.css),
+                  so serve widths matched to the REAL displayed size (77px × aspect) at 1×/2×/3× DPR.
+                  Using logo_width here maxed the srcset at ~180px and made a height-sized logo blurry.
+                {%- endcomment -%}
+                {%- assign sahha_logo_dw = 77.0 | times: settings.logo.aspect_ratio | round -%}
+                {%- assign logo_height = 77 -%}
+                {% capture sizes %}{{ sahha_logo_dw }}px{% endcapture %}
+                {% capture widths %}{{ sahha_logo_dw }}, {{ sahha_logo_dw | times: 2 }}, {{ sahha_logo_dw | times: 3 }}{% endcapture %}
                 {{ settings.logo | image_url: width: 600 | image_tag:
                   class: 'header__heading-logo motion-reduce',
                   widths: widths,
                   height: logo_height,
-                  width: settings.logo_width,
+                  width: sahha_logo_dw,
                   alt: logo_alt,
                   sizes: sizes,
                   preload: true

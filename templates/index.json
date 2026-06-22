@@ -4,8 +4,8 @@
       "type": "sahha-hero",
       "settings": {
         "heading": "Premium Wellness <em>Supplements</em>",
-        "arabic_line": "صحتك بالديني",
-        "tagline": "Daily support, better you 🌿",
+        "arabic_line": "صحتك <span class=\"o\">بالديني</span>",
+        "tagline": "Daily support, <em>better you</em> 🌿",
         "subtext": "Premium wellness supplements for energy, beauty, immunity and active living, sourced from Europe and delivered to your door.",
         "collection": "health-and-wellness",
         "rating_label": "4.8 rating",
@@ -20,10 +20,11 @@
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
-        "title": "The everyday essentials",
+        "kicker": "Bestsellers",
+        "title": "The everyday <em>essentials<\/em>",
         "heading_size": "h2",
         "description": "<p>The formulas our customers reach for most.<\/p>",
-        "show_description": true,
+        "show_description": false,
         "collection": "all",
         "products_to_show": 8,
         "columns_desktop": 4,
