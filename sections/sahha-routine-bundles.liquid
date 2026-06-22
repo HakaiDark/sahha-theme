@@ -52,7 +52,24 @@
                       {%- endif -%}
                     </span>
                     <span class="sahha-rb__item-tx">
-                      <span class="sahha-rb__item-name">{{ prod.title }}</span>
+                      {%- liquid
+                        assign rb_name = ''
+                        assign rb_spec = ''
+                        assign rb_in_spec = false
+                        assign rb_words = prod.title | split: ' '
+                        for rb_w in rb_words
+                          assign rb_fc = rb_w | slice: 0, 1
+                          if rb_in_spec == false and '0123456789' contains rb_fc
+                            assign rb_in_spec = true
+                          endif
+                          if rb_in_spec
+                            assign rb_spec = rb_spec | append: ' ' | append: rb_w
+                          else
+                            assign rb_name = rb_name | append: ' ' | append: rb_w
+                          endif
+                        endfor
+                      -%}
+                      <span class="sahha-rb__item-name">{{ rb_name | strip | escape }}{% if rb_spec != blank %} <span class="sahha-rb__item-spec">{{ rb_spec | strip | escape }}</span>{% endif %}</span>
                       {%- if prod.price > 0 -%}<span class="sahha-rb__item-price">{{ prod.price | money }}</span>{%- endif -%}
                     </span>
                   </a>
@@ -99,6 +116,7 @@
 .sahha-rb__thumb img, .sahha-rb__thumb svg { width: 100%; height: 100%; object-fit: cover; }
 .sahha-rb__item-tx { display: flex; flex-direction: column; gap: 2px; }
 .sahha-rb__item-name { color: var(--green); font-weight: 600; font-size: 1.472rem; line-height: 1.3; }
+.sahha-rb__item-spec { color: var(--accent); font-weight: 700; }
 .sahha-rb__item-price { color: var(--green); font-weight: 800; font-size: 1.36rem; }
 .sahha-rb__form { margin-top: auto; }
 .sahha-rb__hint { max-width: 720px; margin: 24px auto; padding: 18px 22px; border: 1px dashed var(--line-2); border-radius: var(--r-md); background: var(--tint-cream); color: var(--muted); font-size: 1.44rem; line-height: 1.6; }
