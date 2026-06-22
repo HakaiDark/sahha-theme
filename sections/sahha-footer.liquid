@@ -1,0 +1,173 @@
+{%- comment -%}
+  Sahha Daily footer — ports the live site's <SiteFooter> (.ftr-* in
+  SahhaDaily/src/app/globals.css). Dark-green gradient band: brand (white logo +
+  tagline + Arabic) · Explore links · a "Get in touch" card with locations,
+  a WhatsApp button and an Instagram button · an @handle bottom bar.
+  REM ×1.6 for Dawn's 10px root; px/% unchanged. See memory design-port-sahha.
+{%- endcomment -%}
+
+{%- liquid
+  assign wa_number = settings.whatsapp_number | remove: '+' | remove: ' ' | remove: '-'
+  assign wa_msg = section.settings.whatsapp_message | default: 'Hi Sahha Daily! 🌿 I have a question' | url_encode
+  assign logo_alt = shop.name | escape
+-%}
+
+<footer class="sahha-ftr" id="contact">
+  <div class="sahha-ftr__wrap">
+    <div class="ftr-grid">
+      <div class="ftr-brand">
+        {%- if settings.logo != blank -%}
+          <a href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}" class="ftr-logo">
+            {{ settings.logo | image_url: width: 320 | image_tag: loading: 'lazy', alt: logo_alt, widths: '160, 240, 320' }}
+          </a>
+        {%- else -%}
+          <a href="{{ routes.root_url }}" class="ftr-logo ftr-logo--text">{{ shop.name }}</a>
+        {%- endif -%}
+        {%- if section.settings.tagline != blank -%}<p class="ftr-tag">{{ section.settings.tagline }}</p>{%- endif -%}
+        {%- if section.settings.arabic_line != blank -%}<p class="ftr-ar ar" dir="rtl">{{ section.settings.arabic_line }}</p>{%- endif -%}
+      </div>
+
+      <div class="ftr-explore">
+        {%- if section.settings.explore_heading != blank -%}<p class="ftr-col-t">{{ section.settings.explore_heading | escape }}</p>{%- endif -%}
+        <ul class="ftr-links">
+          {%- if section.settings.menu != blank and section.settings.menu.links.size > 0 -%}
+            {%- for link in section.settings.menu.links -%}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {%- endfor -%}
+          {%- else -%}
+            <li><a href="{{ routes.all_products_collection_url }}">All products</a></li>
+            <li><a href="{{ routes.root_url }}#categories">Categories</a></li>
+            <li><a href="{{ routes.root_url }}#experts">Our experts</a></li>
+            <li><a href="{{ routes.root_url }}#about">About Sahha</a></li>
+          {%- endif -%}
+        </ul>
+      </div>
+
+      <div class="ftr-contact">
+        {%- if section.settings.contact_heading != blank -%}<h4>{{ section.settings.contact_heading | escape }}</h4>{%- endif -%}
+        {%- if section.settings.contact_text != blank -%}<p>{{ section.settings.contact_text }}</p>{%- endif -%}
+
+        {%- if section.blocks.size > 0 -%}
+          <div class="ftr-info">
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'location' -%}
+                <div class="ftr-info-row" {{ block.shopify_attributes }}>
+                  <span class="ftr-info-ic">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="1.6"/></svg>
+                  </span>
+                  <span><b>{{ block.settings.title | escape }}</b><small>{{ block.settings.subtitle | escape }}</small></span>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- if wa_number != blank -%}
+          <a class="ftr-wa" href="https://wa.me/{{ wa_number }}?text={{ wa_msg }}" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            {{ section.settings.whatsapp_label | default: 'Chat on WhatsApp' }}
+          </a>
+        {%- endif -%}
+
+        {%- if section.settings.instagram_url != blank -%}
+          <a class="ftr-ig" href="{{ section.settings.instagram_url }}" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor"/></svg>
+            {{ section.settings.instagram_label | default: 'Follow @sahhadaily' }}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="ftr-bar">
+      <span>{{ section.settings.bottom_text | default: '@SahhaDaily' }}</span>
+      <span>© {{ 'now' | date: '%Y' }} {{ shop.name }}</span>
+    </div>
+  </div>
+</footer>
+
+{% stylesheet %}
+.sahha-ftr { background: linear-gradient(165deg, var(--green) 0%, var(--green-deep) 70%, #16311F 100%); color: rgba(255,255,255,0.82); overflow: hidden; margin-top: clamp(40px,5vw,72px); padding-top: clamp(64px,8vw,108px); }
+.sahha-ftr__wrap { width: min(100% - 2 * var(--gutter), 1560px); margin-inline: auto; }
+
+.ftr-grid { display: grid; grid-template-columns: 1.5fr 0.9fr 1.15fr; gap: clamp(28px,4vw,64px); align-items: start; position: relative; z-index: 2; }
+.ftr-logo { display: inline-block; }
+.ftr-brand img { height: 52px; width: auto; filter: brightness(0) invert(1); opacity: 0.96; }
+.ftr-logo--text { color: #fff; font-family: var(--serif); font-size: 2.4rem; font-weight: 600; text-decoration: none; }
+.ftr-tag { color: rgba(255,255,255,0.8); margin: 20px 0 14px; max-width: 38ch; font-size: 1.664rem; line-height: 1.65; }
+.ftr-ar { color: var(--sage); font-weight: 700; font-size: 1.856rem; margin: 0; text-align: left; direction: rtl; font-family: var(--arabic); }
+
+.ftr-col-t { color: #fff; font-weight: 800; font-size: 1.312rem; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 18px; }
+.ftr-links { list-style: none; padding: 0; margin: 0; display: grid; gap: 13px; }
+.ftr-links a { color: rgba(255,255,255,0.78); font-size: 1.632rem; text-decoration: none; transition: color .3s, padding-left .3s; }
+.ftr-links a:hover { color: var(--sage); padding-left: 5px; }
+
+.ftr-contact { align-self: start; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-radius: var(--r-lg); padding: 26px; display: flex; flex-direction: column; }
+.ftr-contact h4 { color: #fff; font-family: var(--serif); font-weight: 500; font-size: 2.08rem; margin: 0 0 6px; }
+.ftr-contact p { color: rgba(255,255,255,0.72); font-size: 1.408rem; line-height: 1.55; margin: 0 0 16px; }
+.ftr-info { display: grid; gap: 12px; margin-bottom: 18px; }
+.ftr-info-row { display: flex; align-items: center; gap: 12px; }
+.ftr-info-ic { width: 38px; height: 38px; border-radius: 11px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); display: grid; place-items: center; color: var(--sage); flex: none; }
+.ftr-info-ic svg { width: 19px; height: 19px; }
+.ftr-info-row > span:last-child { display: flex; flex-direction: column; line-height: 1.35; flex: 1; min-width: 0; }
+.ftr-info-row b { color: #fff; font-size: 1.52rem; font-weight: 700; }
+.ftr-info-row small { color: rgba(255,255,255,0.65); font-size: 1.312rem; }
+
+.ftr-wa, .ftr-ig { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; font-weight: 800; padding: 14px; border-radius: 14px; font-size: 1.504rem; text-decoration: none; color: #fff; transition: transform .35s var(--ease), box-shadow .35s; }
+.ftr-wa { background: #25D366; box-shadow: 0 16px 30px -14px rgba(37,211,102,0.6); }
+.ftr-wa:hover { transform: translateY(-3px); box-shadow: 0 22px 40px -14px rgba(37,211,102,0.7); }
+.ftr-ig { margin-top: 10px; background: linear-gradient(105deg, #F58529, #DD2A7B 55%, #8134AF 100%); box-shadow: 0 16px 30px -14px rgba(221,42,123,0.55); }
+.ftr-ig:hover { transform: translateY(-3px); box-shadow: 0 22px 40px -14px rgba(221,42,123,0.65); }
+.ftr-wa svg, .ftr-ig svg { width: 22px; height: 22px; flex: none; }
+
+.ftr-bar { position: relative; z-index: 2; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 24px 0; border-top: 1px solid rgba(255,255,255,0.14); margin-top: 32px; font-size: 1.28rem; color: rgba(255,255,255,0.55); }
+
+@media (max-width: 980px) { .ftr-grid { grid-template-columns: 1fr 1fr; } .ftr-contact { grid-column: 1 / -1; } }
+@media (max-width: 560px) { .ftr-grid { grid-template-columns: 1fr; } .ftr-bar { justify-content: center; } }
+@media (prefers-reduced-motion: reduce) { .ftr-links a, .ftr-wa, .ftr-ig { transition: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sahha Footer",
+  "tag": "footer",
+  "class": "sahha-footer-section",
+  "settings": [
+    { "type": "header", "content": "Brand" },
+    { "type": "paragraph", "content": "Logo uses the theme logo (Theme settings → Logo), shown in white." },
+    { "type": "textarea", "id": "tagline", "label": "Tagline", "default": "Daily support, better you. Premium supplements for everyday wellness, sourced from Europe and delivered to your door." },
+    { "type": "text", "id": "arabic_line", "label": "Arabic line", "default": "صحتك بالديني 🌿" },
+    { "type": "header", "content": "Explore column" },
+    { "type": "text", "id": "explore_heading", "label": "Heading", "default": "Explore" },
+    { "type": "link_list", "id": "menu", "label": "Menu", "info": "Falls back to default links if empty." },
+    { "type": "header", "content": "Get in touch" },
+    { "type": "text", "id": "contact_heading", "label": "Heading", "default": "Get in touch" },
+    { "type": "textarea", "id": "contact_text", "label": "Text", "default": "Order or ask a question, and our team replies fast every day over WhatsApp." },
+    { "type": "text", "id": "whatsapp_label", "label": "WhatsApp button label", "default": "Chat on WhatsApp" },
+    { "type": "text", "id": "whatsapp_message", "label": "WhatsApp prefilled message", "default": "Hi Sahha Daily! 🌿 I have a question" },
+    { "type": "paragraph", "content": "WhatsApp number comes from Theme settings." },
+    { "type": "url", "id": "instagram_url", "label": "Instagram URL" },
+    { "type": "text", "id": "instagram_label", "label": "Instagram button label", "default": "Follow @sahhadaily" },
+    { "type": "header", "content": "Bottom bar" },
+    { "type": "text", "id": "bottom_text", "label": "Bottom-left text", "default": "@SahhaDaily" }
+  ],
+  "blocks": [
+    {
+      "type": "location",
+      "name": "Location",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Al Qaraoun" },
+        { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "West Bekaa, Lebanon" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sahha Footer",
+      "blocks": [
+        { "type": "location", "settings": { "title": "Al Qaraoun", "subtitle": "West Bekaa, Lebanon" } },
+        { "type": "location", "settings": { "title": "Taalabaya", "subtitle": "Bekaa, Lebanon" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

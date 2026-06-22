@@ -2,52 +2,34 @@
   "name": "t:sections.footer.name",
   "type": "footer",
   "sections": {
-    "footer": {
-      "type": "footer",
+    "sahha_footer": {
+      "type": "sahha-footer",
       "blocks": {
-        "footer-0": {
-          "type": "link_list",
-          "settings": {
-            "heading": "Quick links",
-            "menu": "footer"
-          }
+        "loc1": {
+          "type": "location",
+          "settings": { "title": "Al Qaraoun", "subtitle": "West Bekaa, Lebanon" }
         },
-        "footer-1": {
-          "type": "link_list",
-          "settings": {
-            "heading": "Info",
-            "menu": "footer"
-          }
-        },
-        "footer-2": {
-          "type": "text",
-          "settings": {
-            "heading": "Our mission",
-            "subtext": "<p>Share contact information, store details, and brand content with your customers.<\/p>"
-          }
+        "loc2": {
+          "type": "location",
+          "settings": { "title": "Taalabaya", "subtitle": "Bekaa, Lebanon" }
         }
       },
-      "block_order": [
-        "footer-0",
-        "footer-1",
-        "footer-2"
-      ],
+      "block_order": ["loc1", "loc2"],
       "settings": {
-        "color_scheme": "scheme-1",
-        "newsletter_enable": true,
-        "newsletter_heading": "Subscribe to our emails",
-        "show_social": true,
-        "enable_country_selector": false,
-        "enable_language_selector": false,
-        "payment_enable": true,
-        "show_policy": false,
-        "margin_top": 48,
-        "padding_top": 36,
-        "padding_bottom": 36
+        "tagline": "Daily support, better you. Premium supplements for everyday wellness, sourced from Europe and delivered to your door.",
+        "arabic_line": "صحتك بالديني 🌿",
+        "explore_heading": "Explore",
+        "contact_heading": "Get in touch",
+        "contact_text": "Order or ask a question, and our team replies fast every day over WhatsApp.",
+        "whatsapp_label": "Chat on WhatsApp",
+        "whatsapp_message": "Hi Sahha Daily! 🌿 I have a question",
+        "instagram_url": "https://instagram.com/sahhadaily",
+        "instagram_label": "Follow @sahhadaily",
+        "bottom_text": "@SahhaDaily"
       }
     }
   },
   "order": [
-    "footer"
+    "sahha_footer"
   ]
 }
