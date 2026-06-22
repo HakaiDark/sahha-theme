@@ -1,0 +1,106 @@
+{%- comment -%}
+  Sahha "Shop by category" — ports the live site's #categories section (.catg-*
+  in SahhaDaily/src/app/globals.css). A centred intro (kicker · colored heading ·
+  lead) over a grid of horizontal category tiles: tinted thumb · name · count · arrow.
+
+  Tiles are driven by the store's collections (skips the auto "frontpage"/"all"
+  and any empty collection). REM ×1.6 for Dawn's 10px root; px/vw unchanged.
+  See memory design-port-sahha.
+{%- endcomment -%}
+
+<div class="color-{{ section.settings.color_scheme }} isolate gradient">
+  <div class="sahha-cat" data-section-id="{{ section.id }}">
+    <div class="sahha-cat__wrap">
+      <div class="sahha-cat__intro">
+        {%- if section.settings.kicker != blank -%}
+          <span class="sahha-kicker center">{{ section.settings.kicker | escape }}</span>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="sahha-cat__h2">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subtext != blank -%}
+          <p class="sahha-cat__lead">{{ section.settings.subtext | escape }}</p>
+        {%- endif -%}
+      </div>
+
+      <div class="catg-grid">
+        {%- assign shown = 0 -%}
+        {%- for collection in collections -%}
+          {%- unless collection.handle == 'frontpage' or collection.handle == 'all' or collection.all_products_count == 0 -%}
+            {%- if shown >= section.settings.max -%}{%- break -%}{%- endif -%}
+            {%- assign cat_img = collection.image -%}
+            {%- if cat_img == blank and collection.products.first != blank -%}
+              {%- assign cat_img = collection.products.first.featured_image -%}
+            {%- endif -%}
+            <a class="catg-card" href="{{ collection.url }}">
+              <span class="catg-thumb">
+                {%- if cat_img != blank -%}
+                  {{ cat_img | image_url: width: 160 | image_tag:
+                    loading: 'lazy',
+                    widths: '64, 96, 128, 160',
+                    sizes: '64px',
+                    alt: collection.title | escape }}
+                {%- endif -%}
+              </span>
+              <span class="catg-info">
+                <h3>{{ collection.title | escape }}</h3>
+                <span>{{ collection.all_products_count }} product{% if collection.all_products_count != 1 %}s{% endif %}</span>
+              </span>
+              <span class="catg-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </a>
+            {%- assign shown = shown | plus: 1 -%}
+          {%- endunless -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+.sahha-cat { position: relative; padding-block: clamp(64px, 9vw, 120px); background-color: rgb(var(--color-background)); }
+.sahha-cat__wrap { width: min(100% - 2 * var(--gutter), 1560px); margin-inline: auto; }
+
+/* centred editorial intro (matches .intro on the live site) */
+.sahha-cat__intro { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 64ch; margin: 0 auto clamp(36px, 4vw, 56px); }
+.sahha-cat__intro .sahha-kicker { margin-bottom: 18px; }
+.sahha-cat__h2 { font-family: var(--serif); font-weight: 500; color: var(--green); margin: 0; font-size: clamp(3.36rem, 4.4vw, 6.4rem); line-height: 1.02; letter-spacing: -0.012em; text-transform: capitalize; }
+.sahha-cat__h2 em, .sahha-cat__h2 i { color: var(--accent); font-style: italic; }
+.sahha-cat__lead { margin: 16px 0 0; color: var(--ink-soft); font-size: clamp(1.68rem, 1.5vw, 2.11rem); line-height: 1.66; font-weight: 500; }
+
+/* tiles — faithful port of .catg-grid / .catg-card (rem ×1.6) */
+.catg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 1.8vw, 24px); }
+.catg-card { position: relative; display: flex; align-items: center; gap: 16px; padding: 22px 24px; border-radius: var(--r-lg); background: var(--paper-2); border: 1px solid var(--line); box-shadow: var(--brand-shadow-sm); transition: transform .4s var(--ease), box-shadow .4s var(--ease); overflow: hidden; text-decoration: none; }
+.catg-card:hover { box-shadow: var(--brand-shadow); }
+.catg-thumb { width: 64px; height: 64px; border-radius: var(--r-md); display: grid; place-items: center; flex: none; }
+.catg-thumb img { width: 76%; height: auto; object-fit: contain; filter: drop-shadow(0 10px 12px rgba(28, 60, 42, 0.2)); }
+.catg-card:nth-child(3n + 1) .catg-thumb { background: var(--tint-mint); }
+.catg-card:nth-child(3n + 2) .catg-thumb { background: var(--tint-peach); }
+.catg-card:nth-child(3n + 3) .catg-thumb { background: var(--tint-sage); }
+.catg-info h3 { font-family: var(--font-body-family); font-weight: 800; font-size: 1.632rem; color: var(--ink); line-height: 1.25; margin: 0; text-transform: none; }
+.catg-info span { font-size: 1.28rem; color: var(--muted); font-weight: 600; }
+.catg-arrow { margin-left: auto; flex: none; color: var(--green); display: grid; place-items: center; transition: transform .4s var(--ease); }
+.catg-card:hover .catg-arrow { transform: translateX(5px); }
+
+@media (max-width: 989px) { .catg-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .catg-grid { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .catg-card, .catg-arrow { transition: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sahha Categories",
+  "tag": "section",
+  "class": "sahha-categories-section",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "Shop by category" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "info": "Italicise a word to colour it orange.", "default": "Find your <em>priority</em>" },
+    { "type": "text", "id": "subtext", "label": "Subtext", "default": "Browse the range by what matters most to you." },
+    { "type": "range", "id": "max", "min": 3, "max": 12, "step": 1, "label": "Max categories to show", "default": 9 },
+    { "type": "header", "content": "Appearance" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "Sahha Categories" }]
+}
+{% endschema %}
