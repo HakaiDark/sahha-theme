@@ -126,9 +126,26 @@
               {{ card_product.price | money }}
             {%- endif -%}
           </span>
-          <span class="alink" aria-hidden="true">
-            <span class="ln">{{ 'products.product.view_full_details' | t | split: ' ' | first }}</span>
-          </span>
+          {%- liquid
+            assign qa_variant = card_product.selected_or_first_available_variant
+          -%}
+          {%- if card_product.available == false -%}
+            <span class="pcard-add is-soldout">{{ 'products.product.sold_out' | t }}</span>
+          {%- elsif card_product.variants.size > 1 -%}
+            {%- comment -%} multi-variant: send to product page to choose {%- endcomment -%}
+            <a class="pcard-add pcard-add--link" href="{{ card_product.url }}"><span class="ln">Choose</span></a>
+          {%- else -%}
+            <button
+              type="button"
+              class="pcard-add"
+              data-pcard-add
+              data-variant-id="{{ qa_variant.id }}"
+              aria-label="{{ 'products.product.add_to_cart' | t }}: {{ card_product.title | escape }}"
+            >
+              <span class="ln">Add</span>
+              <svg class="pcard-add__plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          {%- endif -%}
         </div>
       </div>
     </article>

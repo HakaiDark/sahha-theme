@@ -479,10 +479,41 @@ h1, h2, h3, h4, h5, h6,
 .pcard:hover .alink { gap: 14px; }
 .pcard:hover .alink .ln::after { transform: scaleX(1); }
 
+/* quick-add "Add +" button — replaces the View link in the foot. Sits ABOVE
+   the full-card .pcard-link overlay (z-index 4) so it's clickable without
+   navigating to the product. */
+.pcard .pcard-add {
+  position: relative;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-body-family);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color .2s var(--ease), opacity .2s var(--ease);
+}
+.pcard .pcard-add__plus { width: 15px; height: 15px; transition: transform .35s var(--ease); }
+.pcard .pcard-add:hover { color: var(--accent); }
+.pcard .pcard-add:hover .pcard-add__plus { transform: rotate(90deg); }
+.pcard .pcard-add:active { transform: scale(0.96); }
+.pcard .pcard-add.is-loading { opacity: .5; pointer-events: none; }
+.pcard .pcard-add.is-added { color: var(--accent); }
+.pcard .pcard-add.is-soldout { color: var(--muted); font-weight: 600; cursor: default; }
+
 @media (prefers-reduced-motion: reduce) {
   .pcard-media,
   .pcard-media img,
   .pcard .alink,
+  .pcard .pcard-add,
+  .pcard .pcard-add__plus,
   .pcard .alink .ln::after { transition: none; }
   .pcard:hover .pcard-media img { transform: none; }
 }
