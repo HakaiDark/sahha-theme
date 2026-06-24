@@ -306,7 +306,7 @@
     </script>
   </head>
 
-  <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}{% if template.name == 'index' %} sahha-home{% endif %}">
+  <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}{% if template.name == 'index' or template.name == 'product' or template.name == 'collection' %} sahha-motion{% endif %}">
     <a class="skip-to-content-link button visually-hidden" href="#MainContent">
       {{ 'accessibility.skip_to_text' | t }}
     </a>
@@ -382,7 +382,7 @@
       <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
 
-    {%- if template.name == 'index' -%}
+    {%- if template.name == 'index' or template.name == 'product' or template.name == 'collection' -%}
       {% render 'sahha-motion' %}
     {%- endif -%}
   </body>

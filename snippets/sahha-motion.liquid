@@ -3,17 +3,18 @@
   The hidden/transition CSS lives in assets/sahha-brand.css (loaded in <head>,
   so there's no flash-of-content). This only flips `.is-in` as each section
   scrolls into view. The <noscript> + IO fallback guarantee content is never
-  left invisible if JS is disabled or unsupported. Rendered only on the index
-  template (see layout/theme.liquid). Paper-grain overlay is pure CSS.
+  left invisible if JS is disabled or unsupported. Rendered on the index,
+  product and collection templates (see layout/theme.liquid). Paper-grain
+  overlay is pure CSS.
 {% endcomment %}
 <noscript>
   <style>
-    .sahha-home #MainContent > .shopify-section { opacity: 1 !important; transform: none !important; }
+    .sahha-motion #MainContent > .shopify-section { opacity: 1 !important; transform: none !important; }
   </style>
 </noscript>
 <script>
   (function () {
-    var sel = '.sahha-home #MainContent > .shopify-section:not(:first-child)';
+    var sel = '.sahha-motion #MainContent > .shopify-section:not(:first-child)';
     var els = document.querySelectorAll(sel);
     if (!els.length) return;
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;

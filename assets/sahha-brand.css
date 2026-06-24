@@ -757,24 +757,23 @@ h1, h2, h3, h4, h5, h6,
 }
 
 /* =============================================================
-   MOTION — subtle scroll-reveal (homepage) + paper-grain overlay
+   MOTION — subtle scroll-reveal + paper-grain overlay
    Hidden state lives here (in <head> via sahha-brand.css) so there's no
    flash-of-content; snippets/sahha-motion.liquid flips `.is-in` on scroll.
-   Scoped to body.sahha-home (index template only, for now). The hero
-   (first section) is left visible; everything after it gently fades + rises.
+   Scoped to body.sahha-motion (index + product + collection templates). The
+   first section is left visible; everything after it gently fades + rises.
    ============================================================= */
-.sahha-home #MainContent > .shopify-section:not(:first-child) {
+.sahha-motion #MainContent > .shopify-section:not(:first-child) {
   opacity: 0;
   transform: translateY(22px);
   transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
-  will-change: opacity, transform;
 }
-.sahha-home #MainContent > .shopify-section.is-in {
+.sahha-motion #MainContent > .shopify-section.is-in {
   opacity: 1;
   transform: none;
 }
 @media (prefers-reduced-motion: reduce) {
-  .sahha-home #MainContent > .shopify-section {
+  .sahha-motion #MainContent > .shopify-section {
     opacity: 1 !important;
     transform: none !important;
     transition: none;
@@ -784,7 +783,7 @@ h1, h2, h3, h4, h5, h6,
 /* Paper-grain: a faint fixed noise texture over the warm paper, for a printed
    "editorial" feel (matches the live site). pointer-events:none so it never
    blocks clicks; multiply blend keeps it subtle on light + dark sections. */
-.sahha-home::after {
+.sahha-motion::after {
   content: "";
   position: fixed;
   inset: 0;
@@ -796,5 +795,5 @@ h1, h2, h3, h4, h5, h6,
   background-size: 160px 160px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .sahha-home::after { opacity: 0.035; }
+  .sahha-motion::after { opacity: 0.035; }
 }
