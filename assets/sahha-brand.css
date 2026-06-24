@@ -489,26 +489,29 @@ h1, h2, h3, h4, h5, h6,
   align-items: center;
   gap: 8px;
   margin: 0;
-  padding: 4px 0;
-  border: 0;
-  background: transparent;
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  background: var(--tint-mint);
   font-family: var(--font-body-family);
-  font-size: 1.6rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 800;
   line-height: 1; /* tight box so the cart icon optically centres with "Add" */
+  letter-spacing: 0.01em;
   color: var(--green);
   text-decoration: none;
   cursor: pointer;
-  transition: color .2s var(--ease), opacity .2s var(--ease);
+  transition: background .25s var(--ease), color .25s var(--ease);
 }
-/* orange cart icon */
-.pcard .pcard-add__cart { width: 18px; height: 18px; flex: none; color: var(--accent); transition: transform .3s var(--ease); }
-.pcard .pcard-add:hover { color: var(--accent); }
-.pcard .pcard-add:hover .pcard-add__cart { transform: translateX(2px); }
-.pcard .pcard-add:active { transform: scale(0.96); }
-.pcard .pcard-add.is-loading { opacity: .5; pointer-events: none; }
-.pcard .pcard-add.is-added { color: var(--accent); }
-.pcard .pcard-add.is-soldout { color: var(--muted); font-weight: 600; cursor: default; }
+/* orange cart icon, sits to the LEFT of "Add" (cart-first in markup) */
+.pcard .pcard-add__cart { width: 18px; height: 18px; flex: none; color: var(--accent); transition: color .25s var(--ease), transform .3s var(--ease); }
+.pcard .pcard-add:hover { background: var(--green); color: #fff; }
+.pcard .pcard-add:hover .pcard-add__cart { color: #fff; transform: translateX(1px); }
+.pcard .pcard-add:active { transform: scale(0.95); }
+.pcard .pcard-add.is-loading { opacity: .6; pointer-events: none; }
+.pcard .pcard-add.is-added,
+.pcard .pcard-add.is-added .pcard-add__cart { background: var(--green); color: #fff; }
+.pcard .pcard-add.is-soldout { background: transparent; color: var(--muted); font-weight: 600; cursor: default; padding: 4px 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .pcard-media,
