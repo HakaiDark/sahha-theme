@@ -809,3 +809,50 @@ h1, h2, h3, h4, h5, h6,
 .menu-drawer__account {
   display: none !important;
 }
+
+/* =============================================================
+   MOBILE — brand the catalog filter DRAWER to match the desktop panel.
+   Dawn's `.mobile-facets__*` ships default/black; recolor it green and give
+   the options the same orange custom checkbox used on desktop. Scoped to
+   `.sahha-shop` (the product-grid section wrapper).
+   ============================================================= */
+.sahha-shop .mobile-facets__inner,
+.sahha-shop .mobile-facets__main,
+.sahha-shop .mobile-facets__submenu { background: var(--paper-2); }
+.sahha-shop .mobile-facets__header { border-bottom: 2px solid var(--green); }
+.sahha-shop .mobile-facets__heading { color: var(--green); font-family: var(--sans); font-weight: 800; letter-spacing: 0.02em; }
+.sahha-shop .mobile-facets__count { color: var(--muted); }
+.sahha-shop .mobile-facets__summary,
+.sahha-shop .mobile-facets__summary > div > span { color: var(--green); font-family: var(--sans); font-weight: 800; font-size: 1.55rem; }
+.sahha-shop .mobile-facets__close-button { color: var(--green); font-weight: 700; }
+.sahha-shop .mobile-facets__label,
+.sahha-shop .mobile-facets__label .facet-checkbox__text { color: var(--green); font-weight: 600; font-size: 1.5rem; }
+.sahha-shop .mobile-facets__sort label { color: var(--green); font-weight: 700; }
+.sahha-shop .mobile-facets__footer .button--primary { background: var(--green); border-color: var(--green); color: #fff; }
+.sahha-shop .mobile-facets__clear { color: var(--accent); font-weight: 700; }
+/* custom orange checkbox in the drawer — mirror the desktop one (hide Dawn's
+   square/highlight/checkmark, restyle the native input) */
+.sahha-shop .mobile-facets__label > svg,
+.sahha-shop .mobile-facets__label .mobile-facets__highlight,
+.sahha-shop .mobile-facets__label .icon-checkmark { display: none; }
+.sahha-shop .mobile-facets__label { display: flex; align-items: center; min-height: 44px; }
+.sahha-shop .mobile-facets__checkbox {
+  position: static;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  margin: 0 12px 0 0;
+  flex: none;
+  border: 1.5px solid var(--line-2);
+  border-radius: 6px;
+  background: var(--paper-2);
+}
+.sahha-shop .mobile-facets__checkbox:checked {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8.4l3.3 3.3L13 5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 13px;
+}

@@ -556,8 +556,10 @@
   .pdx-buy-actions { flex-direction: column; }
   .pdx-trust { gap: 10px 16px; }
   .pdx-list { grid-template-columns: 1fr; }
-  .pdx-tabs .tabbar { gap: 4px; }
-  .pdx-tabs .tabbar button { padding: 11px 15px; font-size: 1.3rem; }
+  /* tabs: one horizontal-scroll row instead of wrapping to two lines */
+  .pdx-tabs .tabbar { gap: 4px; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .pdx-tabs .tabbar::-webkit-scrollbar { display: none; }
+  .pdx-tabs .tabbar button { padding: 11px 15px; font-size: 1.3rem; white-space: nowrap; flex: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .pdx-media img, .pdx-media, .pdx-chip, .pdx-thumb, .pdx-back .ln::after { transition: none; }

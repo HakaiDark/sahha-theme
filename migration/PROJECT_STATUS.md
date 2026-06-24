@@ -354,6 +354,19 @@ would reset prices/images/inventory.)
 - Routine finder background too dark — lighten it.
 - Page bg should be `#F4F0E6` (was `#F6F2E9`) — owner fixes in customizer (can't push settings_data.json).
 
+### 📱 Mobile pass (2026-06-24)
+Owner asked for a comprehensive mobile-friendly pass. **Audit finding (CDP true-mobile emulation at 360/390/430/768px):** the
+theme was ALREADY largely responsive — NO horizontal overflow on homepage / PDP / catalog at 390px or 768px; sections stack and
+reflow correctly (the Phase-7 port's `@media` rules were doing the work). Real gaps found + fixed:
+- **Mobile filter DRAWER was unstyled default Dawn** (black text) — branded it green to match the desktop panel: green headers/labels/
+  back-button + the same orange custom checkbox (`.sahha-shop .mobile-facets__*` block in sahha-brand.css). Biggest "felt unfinished" gap.
+- **PDP tabs wrapped to 2 rows** on narrow phones — now a single horizontal-scroll row (`.pdx-tabs .tabbar` nowrap/overflow-x at ≤600).
+- **Experts modal close button** 42→44px (touch-target minimum); drawer option labels min-height 44px.
+- Verified via CDP: drawer labels rgb(46,91,63) green, PDP tabs = 1 row, no overflow.
+- ⚠️ NOT yet changed (judgment calls, left for owner feedback): the homepage **featured-collection is a swipe slider** on mobile
+  (cards partially cut) — could switch to a 2-col grid; the catalog filter **panel card** styling (cream bg/sticky) is gated ≥990px
+  so 750–989px tablet shows the sidebar without the card. Both functional; flagged for owner.
+
 ## 💡 Later ideas (owner-flagged)
 - ~~**7th wellness goal for Berberine**~~ — ✅ **DONE 2026-06-24** (see STILL LEFT #3). 7 goals now: Energy,
   Immunity, Beauty, Calm, Joints, Family, **Heart**. Every product now in ≥1 goal.
