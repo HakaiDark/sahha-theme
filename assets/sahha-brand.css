@@ -127,13 +127,12 @@ h1, h2, h3, h4, h5, h6,
 .sahha-btn.ghost::after { background: var(--green); }
 .sahha-btn.ghost:hover { color: #fff; border-color: var(--green); }
 .sahha-btn.full { width: 100%; }
-/* Featured-collection "View all products" — branded ghost pill (matches the
-   live site's `.btn ghost` + ArrowIcon) with an arrow that slides on hover. */
-.sahha-viewall__arr { transition: transform .35s var(--ease); }
-.sahha-viewall:hover .sahha-viewall__arr { transform: translateX(5px); }
+/* Featured-collection "View all products" — branded ghost pill (live `.btn ghost`),
+   GREEN label at rest (not ink/black); turns white on the green hover fill. */
+.sahha-btn.ghost.sahha-viewall { --fg: var(--green); }
 .sahha-wide .collection__view-all { margin-top: clamp(28px, 3vw, 44px); }
 @media (prefers-reduced-motion: reduce) {
-  .sahha-btn, .sahha-btn::after, .sahha-viewall__arr { transition: none; }
+  .sahha-btn, .sahha-btn::after { transition: none; }
 }
 
 /* =========================================================
