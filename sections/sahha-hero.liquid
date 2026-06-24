@@ -97,8 +97,8 @@
         <div class="sahha-hx__pill p1">
           <span class="ic">★</span>
           <span class="tx">
-            <b>{{ section.settings.rating_label }}</b>
-            <span>{{ section.settings.reviews_label }}</span>
+            <b data-hx-rating>{{ section.settings.rating_label }}</b>
+            <span data-hx-reviews>{{ section.settings.reviews_label }}</span>
           </span>
         </div>
       {%- endif -%}
@@ -114,13 +114,34 @@
       var imgs = root.querySelectorAll('img');
       if (imgs.length < 2) return;
       root.dataset.bound = '1';
+
+      // Per-product rating/reviews, aligned 1:1 with imgs above (same
+      // featured_image guard), so the floating pill matches the shown product.
+      var data = [];
+      {%- for product in rotate.products limit: 10 -%}
+        {%- if product.featured_image != blank -%}
+          data.push({ r: {{ product.metafields.custom.rating.value | default: 0 | json }}, c: {{ product.metafields.custom.review_count.value | default: 0 | json }} });
+        {%- endif -%}
+      {%- endfor -%}
+      var visual = root.parentElement;
+      var rEl = visual && visual.querySelector('[data-hx-rating]');
+      var cEl = visual && visual.querySelector('[data-hx-reviews]');
+      function setPill(idx) {
+        var d = data[idx];
+        if (!d) return;
+        if (rEl && d.r) rEl.textContent = d.r + ' rating';
+        if (cEl && d.c) cEl.textContent = Number(d.c).toLocaleString() + ' reviews';
+      }
+
       imgs[0].classList.add('is-active');
+      setPill(0);
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       var i = 0;
       setInterval(function () {
         imgs[i].classList.remove('is-active');
         i = (i + 1) % imgs.length;
         imgs[i].classList.add('is-active');
+        setPill(i);
       }, 4600);
     })();
   </script>
