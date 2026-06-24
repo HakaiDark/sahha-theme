@@ -232,6 +232,16 @@ h1, h2, h3, h4, h5, h6,
 .header__heading-logo { height: 7.7rem; width: auto; max-width: none; transition: height .4s var(--ease); }
 .scrolled-past-header .header__heading-logo { height: 6.5rem; }
 
+/* Header uses the SAME wide band as the hero/featured sections (1560px), so the
+   logo's left edge lines up with the hero copy ("Premium…") instead of sitting
+   inset in Dawn's narrower 1200px page-width. */
+.header:not(.drawer-menu).page-width {
+  max-width: none;
+  width: min(100% - 2 * var(--gutter), 1560px);
+  padding-inline: 0;
+  margin-inline: auto;
+}
+
 /* desktop layout: logo left · nav centered · icons right (match original .hdr-in) */
 @media screen and (min-width: 990px) {
   .header.header--middle-left { grid-template-columns: 1fr auto 1fr; column-gap: 2rem; }
@@ -479,10 +489,48 @@ h1, h2, h3, h4, h5, h6,
 .pcard:hover .alink { gap: 14px; }
 .pcard:hover .alink .ln::after { transform: scaleX(1); }
 
+/* quick-add "Add +" button — replaces the View link in the foot. Sits ABOVE
+   the full-card .pcard-link overlay (z-index 4) so it's clickable without
+   navigating to the product. */
+.pcard .pcard-add {
+  position: relative;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  background: var(--tint-mint);
+  font-family: var(--font-body-family);
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1; /* tight box so the cart icon optically centres with "Add" */
+  letter-spacing: 0.01em;
+  color: var(--green);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .25s var(--ease), color .25s var(--ease);
+}
+/* orange cart icon, sits to the LEFT of "Add" (cart-first in markup).
+   margin-top nudges it up so it optically centres with the "Add" caps
+   (the cart glyph's mass sits low in its box). */
+.pcard .pcard-add__cart { width: 18px; height: 18px; flex: none; margin-top: -2px; color: var(--accent); transition: color .25s var(--ease), transform .3s var(--ease); }
+.pcard .pcard-add:hover { background: var(--green); color: #fff; }
+.pcard .pcard-add:hover .pcard-add__cart { color: #fff; transform: translateX(1px); }
+.pcard .pcard-add:active { transform: scale(0.95); }
+.pcard .pcard-add.is-loading { opacity: .6; pointer-events: none; }
+.pcard .pcard-add.is-added,
+.pcard .pcard-add.is-added .pcard-add__cart { background: var(--green); color: #fff; }
+.pcard .pcard-add.is-soldout { background: transparent; color: var(--muted); font-weight: 600; cursor: default; padding: 4px 0; }
+
 @media (prefers-reduced-motion: reduce) {
   .pcard-media,
   .pcard-media img,
   .pcard .alink,
+  .pcard .pcard-add,
+  .pcard .pcard-add__cart,
   .pcard .alink .ln::after { transition: none; }
   .pcard:hover .pcard-media img { transform: none; }
 }

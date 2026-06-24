@@ -1,0 +1,73 @@
+{% comment %}
+  Quick-add: AJAX add-to-cart from the product cards' "Add +" button
+  (snippets/card-product.liquid `[data-pcard-add]`), so customers can add
+  without opening the product. Single-variant catalog → just the variant id.
+  Mirrors Dawn's product-form flow: FormData + `sections` from the cart
+  drawer/notification → POST cart_add_url → cart.renderContents() opens it.
+  Event-delegated + guarded so it survives Dawn's facet/pagination AJAX and
+  binds only once. Rendered once globally in layout/theme.liquid.
+{% endcomment %}
+<script>
+  (function () {
+    if (window.__sahhaQuickAddBound) return;
+    window.__sahhaQuickAddBound = true;
+
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-pcard-add]');
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (btn.classList.contains('is-loading')) return;
+
+      var id = btn.getAttribute('data-variant-id');
+      if (!id || !window.routes) return;
+
+      var ln = btn.querySelector('.ln');
+      var original = ln ? ln.textContent : '';
+      var cart = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
+
+      btn.classList.add('is-loading');
+
+      var fd = new FormData();
+      fd.append('id', id);
+      fd.append('quantity', 1);
+      if (cart && cart.getSectionsToRender) {
+        fd.append('sections', cart.getSectionsToRender().map(function (s) { return s.id; }));
+        fd.append('sections_url', window.location.pathname);
+        if (cart.setActiveElement) cart.setActiveElement(document.activeElement);
+      }
+
+      fetch(window.routes.cart_add_url, {
+        method: 'POST',
+        headers: { Accept: 'application/javascript', 'X-Requested-With': 'XMLHttpRequest' },
+        body: fd,
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          btn.classList.remove('is-loading');
+          if (res.status) {
+            // e.g. sold out / error — brief feedback, then restore
+            if (ln) ln.textContent = 'Sorry';
+            setTimeout(function () { if (ln) ln.textContent = original; }, 1800);
+            return;
+          }
+          if (cart && cart.renderContents) {
+            cart.renderContents(res); // updates + opens the drawer / notification
+          } else {
+            window.location = window.routes.cart_url;
+            return;
+          }
+          btn.classList.add('is-added');
+          if (ln) ln.textContent = 'Added';
+          setTimeout(function () {
+            btn.classList.remove('is-added');
+            if (ln) ln.textContent = original;
+          }, 1600);
+        })
+        .catch(function () {
+          btn.classList.remove('is-loading');
+          if (ln) ln.textContent = original;
+        });
+    });
+  })();
+</script>
