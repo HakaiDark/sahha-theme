@@ -503,8 +503,10 @@ h1, h2, h3, h4, h5, h6,
   cursor: pointer;
   transition: background .25s var(--ease), color .25s var(--ease);
 }
-/* orange cart icon, sits to the LEFT of "Add" (cart-first in markup) */
-.pcard .pcard-add__cart { width: 18px; height: 18px; flex: none; color: var(--accent); transition: color .25s var(--ease), transform .3s var(--ease); }
+/* orange cart icon, sits to the LEFT of "Add" (cart-first in markup).
+   margin-top nudges it up so it optically centres with the "Add" caps
+   (the cart glyph's mass sits low in its box). */
+.pcard .pcard-add__cart { width: 18px; height: 18px; flex: none; margin-top: -2px; color: var(--accent); transition: color .25s var(--ease), transform .3s var(--ease); }
 .pcard .pcard-add:hover { background: var(--green); color: #fff; }
 .pcard .pcard-add:hover .pcard-add__cart { color: #fff; transform: translateX(1px); }
 .pcard .pcard-add:active { transform: scale(0.95); }
