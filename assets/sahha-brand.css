@@ -796,3 +796,16 @@ h1, h2, h3, h4, h5, h6,
 @media (prefers-reduced-motion: reduce) {
   .sahha-motion::after { opacity: 0.035; }
 }
+
+/* =============================================================
+   Header — hide Search + Account icons FOR NOW. Their search-results /
+   login / account pages are still default (unstyled) Dawn, so they look
+   off-brand. Non-destructive: delete this block to bring them back once
+   those pages are styled. (Accounts can also be fully turned off in
+   admin → Settings → Customer accounts.)
+   ============================================================= */
+.header__search,
+.header__icon--account,
+.menu-drawer__account {
+  display: none !important;
+}
