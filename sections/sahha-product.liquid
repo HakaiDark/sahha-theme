@@ -469,6 +469,15 @@
 .pdx-form .form { margin: 0; }
 .pdx-buy-actions { display: flex; gap: 10px; width: 100%; }
 .pdx-buy-actions .sahha-btn { flex: 1; padding-inline: 18px; }
+/* Add to cart: green base + white text; hover overlay → orange (was ink).
+   `.sahha-btn.pdx-add` (0,2,1) beats the base `.sahha-btn::after` (0,1,1). */
+.sahha-btn.pdx-add::after { background: var(--accent); }
+/* WhatsApp (ghost): logo green + "Order on WhatsApp" orange at rest;
+   hover keeps the green fill, with logo + label going white */
+.pdx-wa span { color: var(--accent); }
+.pdx-wa svg { color: var(--green); }
+.pdx-wa:hover span,
+.pdx-wa:hover svg { color: #fff; }
 .pdx-add[disabled] { opacity: .55; cursor: not-allowed; }
 .product-form__error-message-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: #B23A1E; font-size: 1.36rem; }
 .product-form__error-message-wrapper[hidden] { display: none; }
