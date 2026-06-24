@@ -1,58 +1,73 @@
-{% comment %}theme-check-disable ImgLazyLoading{% endcomment %}
-{{ 'component-collection-hero.css' | asset_url | stylesheet_tag }}
+{% comment %}
+  Sahha shop hero — editorial banner that matches the live site's `.shop-hero`
+  (kicker · big Playfair heading · Arabic flourish · lead). Heading + lead are
+  driven by the collection so it works on every collection page; kicker/Arabic
+  line are editable in the theme editor. See migration/PROJECT_STATUS.md.
+{% endcomment %}
 
-{%- style -%}
-  @media screen and (max-width: 749px) {
-    .collection-hero--with-image .collection-hero__inner {
-      padding-bottom: calc({{ settings.media_shadow_vertical_offset | at_least: 0 }}px + 2rem);
-    }
-  }
-{%- endstyle -%}
+<div class="sahha-shop-hero color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width">
+    <div class="sahha-shop-hero__inner{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+      {%- if section.settings.kicker != blank -%}
+        {%- assign kicker_words = section.settings.kicker | split: ' ' -%}
+        <span class="sahha-kicker center">
+          {%- for word in kicker_words -%}
+            {%- if forloop.last and kicker_words.size > 1 -%}<em>{{ word }}</em>{%- else -%}{{ word }}{%- endif -%}
+            {%- unless forloop.last %}&nbsp;{% endunless -%}
+          {%- endfor -%}
+        </span>
+      {%- endif -%}
 
-<div class="collection-hero{% if section.settings.show_collection_image and collection.image %} collection-hero--with-image{% endif %} color-{{ section.settings.color_scheme }} gradient">
-  <div class="collection-hero__inner page-width {% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
-    <div class="collection-hero__text-wrapper">
-      <h1 class="collection-hero__title">
+      <h1 class="sahha-shop-hero__title">
         <span class="visually-hidden">{{ 'sections.collection_template.title' | t }}: </span>
-        {{- collection.title | escape -}}
+        Shop <em>{{ collection.title | escape }}</em>
       </h1>
 
-      {%- if section.settings.show_collection_description -%}
-        <div class="collection-hero__description rte">{{ collection.description }}</div>
+      {%- if section.settings.arabic_line != blank -%}
+        {%- assign arabic_words = section.settings.arabic_line | split: ' ' -%}
+        <p class="sahha-shop-hero__ar" dir="rtl">
+          {%- for word in arabic_words -%}
+            {%- if forloop.index == 2 -%}<em>{{ word }}</em>{%- else -%}{{ word }}{%- endif -%}
+            {%- unless forloop.last %}&nbsp;{% endunless -%}
+          {%- endfor -%}
+        </p>
+      {%- endif -%}
+
+      {%- if section.settings.show_collection_description and collection.description != blank -%}
+        <div class="sahha-shop-hero__lead rte">{{ collection.description }}</div>
+      {%- elsif section.settings.lead != blank -%}
+        <p class="sahha-shop-hero__lead">{{ section.settings.lead }}</p>
       {%- endif -%}
     </div>
-
-    {%- if section.settings.show_collection_image and collection.image -%}
-      <div class="collection-hero__image-container media gradient">
-        <img
-          srcset="
-            {%- if collection.image.width >= 165 -%}{{ collection.image | image_url: width: 165 }} 165w,{%- endif -%}
-            {%- if collection.image.width >= 360 -%}{{ collection.image | image_url: width: 360 }} 360w,{%- endif -%}
-            {%- if collection.image.width >= 535 -%}{{ collection.image | image_url: width: 535 }} 535w,{%- endif -%}
-            {%- if collection.image.width >= 750 -%}{{ collection.image | image_url: width: 750 }} 750w,{%- endif -%}
-            {%- if collection.image.width >= 1070 -%}{{ collection.image | image_url: width: 1070 }} 1070w,{%- endif -%}
-            {%- if collection.image.width >= 1500 -%}{{ collection.image | image_url: width: 1500 }} 1500w,{%- endif -%}
-            {{ collection.image | image_url }} {{ collection.image.width }}w
-          "
-          src="{{ collection.image | image_url: width: 750 }}"
-          sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 100 | divided_by: 2 }}px, (min-width: 750px) calc(50vw - 130px), calc(50vw - 55px)"
-          alt="{{ collection.image.alt | escape }}"
-          width="{{ collection.image.width }}"
-          height="{{ collection.image.height }}"
-        >
-      </div>
-    {%- endif -%}
   </div>
 </div>
 
 {% schema %}
 {
   "name": "t:sections.main-collection-banner.name",
-  "class": "section",
+  "class": "section sahha-shop-banner sahha-wide",
   "settings": [
     {
       "type": "paragraph",
       "content": "t:sections.main-collection-banner.settings.paragraph.content"
+    },
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Kicker",
+      "default": "Product catalog"
+    },
+    {
+      "type": "text",
+      "id": "arabic_line",
+      "label": "Arabic flourish (leave blank to hide)",
+      "default": "مكمّلات أصلية من أوروبا 🌿"
+    },
+    {
+      "type": "text",
+      "id": "lead",
+      "label": "Fallback lead (used when the collection has no description)",
+      "default": "Premium European-sourced wellness, delivered straight to your door."
     },
     {
       "type": "checkbox",
@@ -75,3 +90,4 @@
   ]
 }
 {% endschema %}
+

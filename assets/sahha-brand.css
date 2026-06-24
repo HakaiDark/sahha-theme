@@ -495,3 +495,259 @@ h1, h2, h3, h4, h5, h6,
   .pcard-meta .pcard-cat { font-size: 0.928rem; letter-spacing: 0.07em; white-space: nowrap; } /* .58rem ×1.6 */
   .pcard-meta .pcard-cat:first-child { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 }
+
+/* =============================================================
+   SHOP / COLLECTION PAGE — port of the live `.shop-hero` + `.shop-layout`
+   (280px sticky filters sidebar + product grid). Dawn's vertical-facet
+   markup AND its filter/sort JS are kept intact — this only restyles them,
+   so the live Search & Discovery filtering (Availability · Price · Wellness
+   goals · Format) keeps working. Rules are scoped under `.sahha-shop` /
+   `.sahha-shop-banner` (added to the section schema `class`) so these
+   2-class selectors beat Dawn's component-facets.css, which loads later in
+   the section body. REM ×1.6 vs SahhaDaily/globals.css (Dawn root = 10px).
+   See [[design-port-sahha]].
+   ============================================================= */
+
+/* --- shop hero (banner section) --- */
+.sahha-shop-hero { text-align: center; padding-top: clamp(28px, 5vw, 56px); }
+.sahha-shop-hero__inner { max-width: 70ch; margin-inline: auto; }
+.sahha-shop-hero .sahha-kicker { margin-bottom: 18px; }
+.sahha-shop-hero__title {
+  font-family: var(--serif);
+  font-weight: 500;
+  color: var(--green);
+  margin: 0;
+  text-transform: capitalize;
+  line-height: 1.0;
+  letter-spacing: -0.012em;
+  font-size: clamp(3.36rem, 4.4vw, 6.4rem); /* matches .sahha-h-lg */
+}
+/* two-tone heading: prefix green, collection name accent-orange italic
+   (matches the homepage green-base + orange-<em> convention) */
+.sahha-shop-hero__title em,
+.sahha-shop-hero__title i { color: var(--accent); font-style: italic; }
+/* kicker last word + Arabic 2nd word → accent orange (no italic) */
+.sahha-shop-hero .sahha-kicker em { color: var(--accent); font-style: normal; }
+.sahha-shop-hero__ar {
+  font-family: 'Cairo', var(--sans);
+  direction: rtl;
+  font-weight: 800;
+  color: var(--green);
+  margin: clamp(14px, 2.2vw, 28px) 0 0;
+  font-size: clamp(2.08rem, 2.6vw, 2.88rem); /* .shop-hero-ar ×1.6 */
+}
+.sahha-shop-hero__ar em { color: var(--accent); font-style: normal; }
+.sahha-shop-hero__lead {
+  margin: 14px auto 0;
+  max-width: 56ch;
+  color: var(--ink-soft);
+  font-weight: 500;
+  font-size: clamp(1.68rem, 1.5vw, 2.11rem); /* .sahha-lead */
+  line-height: 1.6;
+}
+.sahha-shop-hero__lead p { margin: 0; }
+
+/* --- inner facet styling (applies at all widths; mobile drawer uses its own
+   .mobile-facets__* classes so these only touch the desktop sidebar form) --- */
+/* "Filter by" heading + clear-all row (live `.fh`) */
+.sahha-shop .active-facets-vertical-filter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid var(--green);
+  gap: 12px;
+}
+.sahha-shop .facets__heading--vertical {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 1.44rem; /* .9rem ×1.6 */
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin: 0;
+}
+/* clear-all → reset pill (live `.reset`) */
+.sahha-shop .active-facets__button-remove {
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  color: var(--green);
+  font-size: 1.216rem; /* .76rem ×1.6 */
+  font-weight: 700;
+  padding: 7px 14px;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.sahha-shop .active-facets__button-remove:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* each facet group */
+.sahha-shop .facets__disclosure-vertical { border-top: 1px solid var(--line); }
+.sahha-shop .facets__disclosure-vertical:first-of-type { border-top: 0; }
+.sahha-shop .facets__summary { padding: 18px 2px; cursor: pointer; }
+/* `> div > span` covers BOTH list filters (.facets__summary-label) and the
+   price filter (plain <span>), so every group header is the same green. */
+.sahha-shop .facets__summary > div > span,
+.sahha-shop .facets__summary-label {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 1.6rem; /* 1rem ×1.6 — bumped for prominence */
+  letter-spacing: 0.02em;
+  color: var(--green);
+}
+/* the "(n) selected" count stays lighter */
+.sahha-shop .facets__selected { color: var(--muted); font-weight: 600; }
+.sahha-shop .facets__display-vertical { padding: 0 2px 16px; border: 0; box-shadow: none; }
+.sahha-shop .facets__list--vertical { display: grid; gap: 2px; }
+
+/* checkbox rows — labels are ALWAYS green (no black); active just bolder.
+   `.facet-checkbox__text` inherits, so the (count) follows too. Covers every
+   checkbox filter (Availability, Routine, Format). */
+.sahha-shop .facets__label.facet-checkbox {
+  padding: 10px 8px;
+  font-size: 1.5rem; /* bumped for prominence */
+  font-weight: 600;
+  color: var(--green);
+  border-radius: var(--r-sm);
+  align-items: flex-start;
+}
+.sahha-shop .facets__label.facet-checkbox .facet-checkbox__text { color: var(--green); }
+.sahha-shop .facets__label.facet-checkbox:hover { background: var(--tint-mint); }
+.sahha-shop .facets__label.facet-checkbox.active { color: var(--green); font-weight: 800; }
+/* custom checkbox: hide Dawn's plain square+check svg, restyle the native input */
+.sahha-shop .facet-checkbox > svg,
+.sahha-shop .facet-checkbox > .svg-wrapper { display: none; }
+.sahha-shop .facet-checkbox input[type='checkbox'] {
+  position: static;
+  z-index: 1;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 19px;
+  height: 19px;
+  margin: 1px 12px 0 0;
+  flex: none;
+  border: 1.5px solid var(--line-2);
+  border-radius: 6px;
+  background: var(--paper-2);
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s;
+}
+.sahha-shop .facet-checkbox input[type='checkbox']:hover { border-color: var(--green); }
+/* checked → orange fill + white check */
+.sahha-shop .facet-checkbox input[type='checkbox']:checked {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8.4l3.3 3.3L13 5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 12px;
+}
+
+/* show-more / per-group reset links */
+.sahha-shop .button-show-more,
+.sahha-shop .facets__reset { color: var(--green); font-weight: 700; font-size: 1.216rem; }
+
+/* price facet inputs */
+.sahha-shop .facets__price { padding: 8px 2px 2px; }
+
+/* --- results + sort toolbar above the grid (live `.cat-results-head`) ---
+   The flex children (sort + count) live inside the inner `.facets-vertical-form`,
+   not the `.facets-vertical-sort` custom element, so the row layout goes there. */
+.sahha-shop .facets-vertical-sort { display: block; margin-bottom: clamp(18px, 2vw, 28px); }
+.sahha-shop .facets-vertical-form {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 12px 28px;
+  flex-wrap: wrap;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+/* product count on the LEFT (markup has sort first → pull count ahead) */
+.sahha-shop .product-count-vertical { order: -1; margin: 0; }
+.sahha-shop .product-count-vertical .product-count__text {
+  font-family: var(--serif);
+  color: var(--green);
+  font-size: 2.08rem; /* 1.3rem ×1.6 */
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 0;
+}
+/* sort on the RIGHT */
+.sahha-shop .facets-vertical-form .facet-filters.sorting { margin: 0; padding: 0; border: 0; }
+.sahha-shop .facet-filters__field { display: flex; align-items: center; gap: 10px; }
+.sahha-shop .facet-filters__label { margin: 0; }
+.sahha-shop .facet-filters__label label {
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 1.28rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.sahha-shop .facet-filters__sort {
+  color: var(--green);
+  font-weight: 700;
+  font-size: 1.36rem;
+}
+
+/* active filter "bubbles" — soft mint tag, green text, bare orange × (variant D) */
+.sahha-shop .active-facets__button { margin: 0; }
+.sahha-shop .active-facets__button-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--tint-mint);
+  border: 0;
+  border-radius: 999px;
+  color: var(--green);
+  font-weight: 700;
+  font-size: 1.26rem;
+  line-height: 1.32;
+  letter-spacing: 0.01em;
+  padding: 8px 14px;
+  transition: background 0.2s;
+}
+.sahha-shop .active-facets__button:hover .active-facets__button-inner { background: var(--tint-sage); }
+/* bare orange × (no circle) */
+.sahha-shop .active-facets__button .svg-wrapper {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  background: transparent;
+  color: var(--accent);
+}
+.sahha-shop .active-facets__button:hover .svg-wrapper { color: var(--accent-deep); }
+.sahha-shop .active-facets__button .svg-wrapper svg { width: 12px; height: 12px; color: var(--accent); }
+
+/* empty state (live `.empty`) */
+.sahha-shop .collection--empty .title-wrapper {
+  border: 1px dashed var(--line-2);
+  border-radius: var(--r-lg);
+  padding: clamp(48px, 8vw, 90px);
+}
+
+/* --- desktop layout: 280px sticky sidebar + grid (live `.shop-layout`).
+   Mobile-first: below 990px everything stacks (Dawn swaps in its own
+   mobile filter drawer ≤749px). --- */
+@media (min-width: 990px) {
+  .sahha-shop .facets-vertical {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: clamp(24px, 3vw, 52px);
+    align-items: start;
+  }
+  /* 3-class selector beats Dawn's `.facets-vertical .facets-wrapper{padding-right:3rem}`
+     so the panel padding is symmetric and the card stays put while scrolling (sticky). */
+  .sahha-shop .facets-vertical .facets-wrapper {
+    position: sticky;
+    top: 100px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 26px;
+  }
+  /* Dawn hard-codes the inner form to 26rem (260px), which is WIDER than the
+     panel's content box → the dividers/underline overflow past the rounded
+     card edge (the "bug"). Make the form fill the panel instead. */
+  .sahha-shop .facets__form-vertical { width: 100%; box-sizing: border-box; }
+}

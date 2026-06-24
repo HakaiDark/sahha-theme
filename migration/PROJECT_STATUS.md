@@ -1,6 +1,8 @@
 # Sahha Daily — Project Status & Roadmap
 
-_The single "where are we" file. Last updated: 2026-06-22 (Phase 7: HOMEPAGE COMPLETE — all sections + footer. Next: motion pass, then PDP)._
+_The single "where are we" file. Last updated: 2026-06-24 (Phase 7: HOMEPAGE COMPLETE + PDP COMPLETE; all 14 product content files prepped & owner is pasting them in. Next: finish pasting + verify flagged values, decide/add the Berberine wellness goal, then motion pass)._
+
+> **▶️ RESUME (read this first):** All PDP theme code is DONE & pushed to store theme #192337019213 (round-trip verified) but **NOT committed to git** (owner approves commits). **Owner has PASTED ALL 14 products' content** (2026-06-24) from `migration/content/<handle>.md` — still worth verifying the ⚠️ flagged source values vs physical labels. **NEW big task added by owner: port the CATALOG / shop (collection) page** — see STILL LEFT #1 (original = `.shop-layout` 280px sticky `.filters` sidebar + grid; ours is still Dawn's default collection chrome; `.pcard` cards already done). Other pending: **Berberine wellness goal** (pick short label `Metabolic` vs `Heart`; tag Berberine ±Omega-3 — admin only) and the **motion pass** (scroll-reveal + paper-grain). Nothing committed to git yet.
 
 Sahha Daily storefront — a **Dawn 15.4.1** Shopify theme (Liquid) branded to the Sahha
 palette + Cairo/Tajawal fonts. Store: **`sahhadaily.myshopify.com`** (free Partner dev
@@ -197,10 +199,147 @@ Original design system reference: `SahhaDaily/src/app/globals.css`. Push CLI in 
 - [x] **Footer** — NEW `sahha-footer.liquid` (replaced Dawn footer); brand + Explore + Get-in-touch (locations/WhatsApp/IG), flows into who-we-are (no margin).
 - [x] Global: headings green base + orange `<em>`; body text solid; all section text ×1.6.
 
-### ▶️ RESUME HERE — what's left
-1. **Motion pass** — CSS scroll-reveal animations + **paper-grain overlay** (owner chose full motion). Dawn's `scroll-trigger`/`animate--*` already fire; add the brand reveal feel + grain.
-2. **Product page (PDP)** — `sections/sahha-product-details.liquid` + `templates/product.json` vs original `.pdx*`/`.pd-*` (~globals L760+). ⚠️ still has the ×1.6 miss (fix like the other sections) + needs the gallery: featured = `immersive/` packshot, then `gallery/<cc>/02-09.webp` via Admin API (skip `01`). Pull `sahhadaily.com/product/<handle>` markup first.
-3. **Small/optional:** verify white logo shows in footer brand column on the real theme; owner may want footer bottom bar bare (just "@SahhaDaily", no ©); delete orphaned `sections/sahha-routine-finder.liquid`.
+### ✅ PDP REBUILT (2026-06-23, pushed to store theme #192337019213, NOT committed to git)
+- **NEW `sections/sahha-product.liquid`** replaces Dawn's `main-product` in `templates/product.json`. Emits the live `.pdx`
+  editorial layout: gallery (`.pdx-media` gradient frame, **is-cutout** floating packshot vs **is-scene** full-bleed creatives,
+  `.pdx-thumbs`) + info column (category·SKU eyebrow, Playfair green `h1`, stars, desc, benefit chips, buy card, goal chips) +
+  tab block. **Real Shopify commerce**: own `<product-form>` add-to-cart (single-variant catalog) via Dawn `product-form.js`
+  (AJAX cart-drawer, native-POST fallback) + a 2nd "Order on WhatsApp" CTA + a trust row (COD · 100% original · WhatsApp).
+  `{{ product | structured_data }}` JSON-LD preserved for SEO.
+- **NEW `sections/sahha-faq.liquid`** = "Questions about this product" (after related-products). Sticky-free intro + accordion;
+  Q&As auto-built from metafields (how/ingredients/who/safety) + 2 editable store-wide answers (COD ordering, authenticity).
+- `templates/product.json` now: `sahha-product` (main) → `related-products` ("Complete your routine") → `sahha-faq`.
+  **`sections/sahha-product-details.liquid` is now ORPHANED** (logic absorbed) — left in place, can delete.
+- **Tabs** = How to use / Ingredients / Nutrition / **Good to know** (4th tab holds `key_features` + `notes`, which the
+  original `.pdx` had no slot for). Lists are **soft-card grids with an orange accent rule (NO checkmarks — owner rejected ✓)**.
+- **Nutrition = branded supplement-facts TABLE** (`.pdx-sf`), owner liked WeightWorld's table. **`custom.nutrition` list format:**
+  `# caption` (serving-size bar) · `Nutrient | Per serving | %NRV` (%NRV optional → column auto-hides) · `+ footer note`.
+  Legacy `Label: value` colon lines still render as 2-col rows.
+- **Bugs fixed this round:** (1) container bled to viewport edges — `.sahha-wide` is only a marker that widens inner
+  `.page-width`; added scoped `width: min(100% - 2*var(--gutter), 1560px); margin-inline:auto`. (2) Gallery showed the same
+  bottle on every thumb — the stage `<img>` had a `srcset` that **overrides `src`**, so JS swaps were ignored; removed
+  srcset/sizes. (3) Removed `position:sticky` from gallery + FAQ intro (owner disliked scroll-follow). (4) Perf: gallery frame
+  layer-promoted (`translateZ(0)`+`contain:paint`) so its shadows rasterise once (was repainting every scroll frame).
+
+### ✅ PDP DESIGN ITERATIONS (2026-06-24, all pushed + round-trip verified, NOT committed)
+Section-CSS gotcha learned: `{% stylesheet %}` blocks compile into ONE cached `compiled_assets/styles.css`; after a push the
+owner MUST hard-refresh / use incognito or changes look "blocked" (cost ~2 rounds of confusion — it was always just cache).
+- **Tabs merged → 3 tabs:** How to use / **Ingredients & Nutrition** / Good to know. The Ingredients & Nutrition tab is a
+  **2-column split** (`.pdx-facts.is-split`, collapses <820px): **left** = ingredients line + "Nutritional information" + the
+  supplement-facts table; **right** = "Safety advice" callout (owner asked to flip nutri-left / safety-right).
+- **Coloring (owner: "more green/orange", text "looked black"):** body paragraphs (`.pdx-lead`) + table nutrient names/%NRV →
+  `--muted` (was near-black `--ink`/`--ink-soft`); feature cards (`.pdx-list`) text → `--green`; sub-headings (`.pdx-subh`)
+  → green + an orange lead dash; table header labels → green; active tab → `--tint-mint` bg + orange underline. Amount column
+  stays `--green`. **NO checkmarks anywhere** (owner rejected ✓ twice — cards use an orange top-rule; chips use an accent dot).
+- **Mobile:** hero stacks <980, buy buttons stack <600, facts split collapses <820, table padding/cols tightened <600, tab
+  labels shrink <600, FAQ stacks <980. Confirmed responsive to ~320px.
+
+### ✅ PDP gallery lag FIXED (2026-06-24)
+Owner: clicking a thumbnail showed the OLD image for ~2s, then popped to the new one. Cause in `sections/sahha-product.liquid`
+gallery JS: it set `stageImg.style.opacity='1'` immediately after changing `src`, so the browser kept showing the old image until
+the new full-size file downloaded (no preload). Fix: (1) **preload every `data-full` gallery image** on init (`new Image()`),
+(2) load the new image via a loader and only swap `src` + fade in on its `onload` (instant when cached). Also bumped `data-full`
+to width 1100 to match the stage's initial image (true cache hit). CDP-verified: thumb-2 click swaps the stage `src`, no JS errors.
+
+### ✅ CONTENT ENRICHMENT — all 14 files PREPPED (2026-06-24); owner pasting them in
+Source = `migration/Information/<handle>.md` (scraped WeightWorld; product page link inside each). **No Admin API token** →
+content is MANUAL admin (owner pastes). Method: **"I prep, you paste."** (Re-import rejected: CSV `0.00` prices + blank images
+would reset prices/images/inventory.)
+- **Paste-ready files live in `migration/content/<handle>.md`** — one per product, code-fenced block per field, **Berberine is the
+  gold-standard format**. Rules baked in: ONE JOB PER FIELD (no phrase repeated across Key features / Benefits / Why-use; Why-use
+  usually left EMPTY); benefits **feature-led not medical** (EFSA-pending claims stripped); Description = hook (not specs);
+  Ingredients = active only; Nutrition = the `#`/`|`/`+` pipe-format that drives `.pdx-sf`.
+- **Owner has PASTED ALL 14 products' content (2026-06-24) ✅.** Each field maps to: Description box (1) + metafields (8).
+- ✅ **SOURCE-DATA FLAGS — VERIFIED 2026-06-24 against label photos; see "STILL LEFT #2" for the resolution + the 3 admin edits owner must still apply.** (original flags below, kept for history)
+- ⚠️ ~~**SOURCE-DATA FLAGS to verify vs physical labels**~~ (agents caught these): Marine Collagen=60 servings(2cap), Magnesium=90,
+  Omega-3=120, Women's Gummies=**45-day** (source "5 months" wrong); **Vitamin D3+K2** source says 365/1-yr but product is **240
+  tablets** (aligned to 240 — confirm); **Glucosamine** kept MSM in facts table (source lists it), fixed garbled Vit C %NRV
+  262.5%→31%, 1-cap vs 2-cap serving disagreement; **Multivitamins (27 rows)** has garbled source rows (`Boron 0 mcg`,
+  `Folic Acid …|0` %NRV, Potassium in mcg) — owner to reconcile, Claude offered to clean; **Kids Gummies** "vegan" left off
+  (only FAQ claimed it).
+
+### ▶️ STILL LEFT (in priority order)
+1. ~~**🆕 CATALOG / shop (collection) page port**~~ — ✅ **BUILT & PUSHED 2026-06-24 (round-trip verified; awaiting owner preview).**
+   Approach: **kept Dawn's vertical-facet markup + its filter/sort JS intact** (so live Search & Discovery filtering keeps
+   working — Availability/Price/Wellness goals/Format) and **restyled** it into the live `.shop-layout`. Changes (4 files):
+   - `templates/collection.json` — product-grid now `filter_type: "vertical"`, `columns_desktop: 3`, `image_ratio: square`,
+     padding 24/64. (Pull-first diff confirmed no customizer settings clobbered.)
+   - `sections/main-collection-banner.liquid` — **rebuilt** into the editorial `.sahha-shop-hero` (kicker · green Playfair
+     collection title · Arabic flourish · lead from collection.description). New editable settings: `kicker`, `arabic_line`,
+     `lead`. Schema class = `section sahha-shop-banner sahha-wide`.
+   - `sections/main-collection-product-grid.liquid` — schema class → `section sahha-shop sahha-wide` (marker only; no markup change).
+   - `assets/sahha-brand.css` — new "SHOP / COLLECTION PAGE" block: 280px sticky filters panel (`.facets-wrapper` → live
+     `.filters`), green uppercase "Filter by" + reset pill, on-brand facet summaries/checkboxes, results+sort bar
+     (`.facets-vertical-sort` → `.cat-results-head`), 1560 band via `.sahha-wide`, mobile stacks <990 (Dawn drawer <750).
+     All scoped under `.sahha-shop`/`.sahha-shop-hero` (2-class specificity beats Dawn's later-loaded component-facets.css). REM ×1.6.
+   - ⚠️ **Tradeoff:** filter controls stay Dawn **checkbox lists + price slider** (restyled), NOT the original's pills/dropdowns —
+     keeps the working filter JS (rebuilding `facets.liquid` would mean rewiring it). Theme check 0 errors / 12 pre-existing warnings.
+   - **Owner feedback round 1 (2026-06-24) — ALL FIXED & pushed (verified live via headless Chrome + CDP width measurement):**
+     1. **Floating WhatsApp bubble removed** — dropped `{% render 'sahha-whatsapp-bubble' %}` from `layout/theme.liquid`
+        (snippet now orphaned → that's the +1 theme-check warning, 13 total; PDP still has its own "Order on WhatsApp" CTA).
+     2. **Sort by was "missing"** — the vertical sort+count bar's flex was hitting the `.facets-vertical-sort` custom element,
+        not the inner `.facets-vertical-form`; fixed → now a proper toolbar: **count left (green serif) · Sort-by right**, divider under.
+     3. **Headings recoloured** — hero `h1` is now two-tone **"Shop" (green) + collection name (orange italic `<em>`)**, matching
+        the site convention. ⚠️ Had to **HARDCODE** `Shop <em>{{ collection.title }}</em>` in the markup: adding a `title_prefix`
+        section *setting* made the banner push **silently no-op** (server rejected the new schema; CLI reported success). See gotcha below.
+     4. **Filter panel polish** — confirmed true 280px sidebar (CDP: facets-vertical = `280px 1016px` grid; eyeball "narrow" was
+        thumbnail scaling). Green "FILTER" header w/ green underline, unified all group labels green (Price summary uses a plain
+        `<span>` not `.facets__summary-label`, so styled `.facets__summary > div > span` too), bigger labels/rows, hover tint.
+   - ⚠️ **NEW push gotcha:** if a section push silently no-ops **repeatedly even after touch/whitespace bump**, suspect a
+     **server-side schema rejection** (theme-check passes locally but Shopify is stricter) — Shopify keeps the last-valid version
+     and the CLI still says "success". Fix: simplify/remove the new schema setting (here: hardcode instead of a new `text` setting).
+   - Owner-side tweaks they CAN do: the "Routine" facet name (it's the Wellness-goals filter label in the **Search & Discovery**
+     app) and the "FILTER:" heading text (locale string) — both editable without code.
+   - **Owner feedback round 2 (2026-06-24) — ALL FIXED & verified live (CDP measurement):**
+     1. **Kicker "catalog" + Arabic word now orange** — banner splits the kicker/arabic settings on spaces and wraps the last
+        kicker word + 2nd Arabic word ("أصلية") in `<em>` (orange via `.sahha-shop-hero .sahha-kicker em` / `__ar em`). ⚠️ Use
+        `&nbsp;` as the word separator, NOT a literal space — Liquid `{%- -%}` whitespace-strip ate the spaces (rendered "Productcatalog").
+     2. **Sort by moved LEFT** — toolbar `justify-content: flex-start` so it clusters with the count: "14 products  SORT BY …".
+     3. **Filter panel overflow bug FIXED** — Dawn hard-codes the inner `.facets__form-vertical` to 26rem (260px), wider than the
+        panel's content box → dividers/underline overflowed past the rounded card edge. Fix: `.sahha-shop .facets__form-vertical
+        { width:100%; box-sizing:border-box }` + 3-class `.sahha-shop .facets-vertical .facets-wrapper` to win Dawn's padding-right:3rem.
+        CDP-verified: form 226px, sits inside panel (form_right 303 < panel_right 330).
+     4. **Sticky confirmed** — owner wanted the filter to stay put while scrolling; `position:sticky; top:100px` works (CDP: after
+        scrolling 900px, panel_top=100). Stays in view.
+   - **Owner feedback round 3 (2026-06-24) — checkboxes + pills restyled + more orange:**
+     - **Custom checkboxes** — hid Dawn's plain `square.svg`+checkmark (`.facet-checkbox > svg, > .svg-wrapper{display:none}`),
+       restyled the native input (`appearance:none`, rounded 6px, paper bg, line-2 border); **checked = orange fill + white check**
+       (inline SVG data-URI). `align-items:flex-start` so the box lines up with 2-line labels.
+     - **Active "bubbles"** — tighter pills (mint bg, green text, 1.18rem), **× icon orange** (`.active-facets__button .svg-wrapper`),
+       hover → peach bg + orange border. **"Remove all"** reset pill hover → orange (was green).
+     - Decision recorded: **Sort stays as the top toolbar** (not in sidebar) + **filter stays sticky** — both are the recommended UX
+       (owner asked, agreed to leave as-is). Original site had sort in the sidebar; can move it there later if owner changes mind.
+   - **Owner feedback round 4 (2026-06-24):** owner liked the orange checkboxes; still disliked the bubbles + wanted bigger text.
+     - **Bubbles:** rendered a 4-variant comparison mock (scratchpad `bubbles-compare.png`) for the owner to pick from; owner chose
+       **variant D = soft mint tag · green text · bare orange × (no circle)**, hover bg→tint-sage, ×→accent-deep. (Tried solid-green
+       first; owner wanted lighter.)
+     - **Filter text more prominent** → group headers 1.44→**1.6rem**; checkbox option labels 1.36→**1.5rem, weight 600**.
+     - **Black→green glitch (owner caught)** — unselected option labels were `--ink` (near-black), only turning green when active.
+       Fixed: labels + `.facet-checkbox__text` are **always green**, active just bolder (weight 800). My base selector is 0,3,0 so it
+       beats Dawn's `.facets__label:hover/.active{color:foreground}` (0,1,1 / 0,2,0). CDP-verified: all labels rgb(46,91,63) on+off.
+   - **NOT committed to git** (owner approves commits).
+2. ~~**Verify ⚠️ flagged content values**~~ — ✅ **VERIFIED 2026-06-24 against owner's label photos (in `SahhaDaily Docs/product-images-png/<NN>/gallery-*.png`).**
+   `migration/content/*.md` all corrected. **Owner still needs to apply 3 edits in ADMIN:**
+   - **Multivitamin** — KEY FINDING: WeightWorld's *own web table* is garbled; our content had copied it. Corrected 8 cells vs the
+     physical label: Vit C %NRV 100→**150**, Potassium mcg→**mg**, Calcium %NRV 8→**1**, Folic Acid 0→**100**, Chromium 0→**100**,
+     Boron `0mcg|0`→**25mcg|***, Choline `|0`→**|***, K2 8→**6** (+matched chemical forms). Owner must **re-paste the Nutrition metafield**.
+   - **Vitamin D3+K2** — bottle is actually **365** tablets, NOT 240 (owner confirmed front-of-pack). Updated content + **renamed file
+     to `vitamin-d3-k2-mk7-365-tablets.md`**. Owner must update in admin: **title 240→365**, Nutrition serving bar 240→365, benefit
+     chip "240→365 tablets per pack" (handle still says 240 — optional). Doses (4000IU D3/125mcg K2, 2000%/166%) were correct.
+   - **Kids gummies** — ingredients confirm **vegan** (pectin, no gelatin); added Key-features line `Vegan-friendly, pectin-based
+     gummies (no gelatin)`. Owner adds that one line in admin.
+   - **Glucosamine** — values already correct (label shows per-1-cap AND per-2-cap; we use 1-cap = official serving). Polished `.md`
+     to amount-only + forms; admin re-paste is **optional**.
+   - Collagen / Magnesium / Omega-3 / Women's-gummies serving math all consistent — treated as confirmed.
+   - 💡 Gotcha: the `product-images-png` gallery assets are WeightWorld marketing images and **may not match the exact pack size**
+     (the D3+K2 365-image was initially in a "240" folder). Worth a per-product glance when wiring PDP galleries.
+3. ~~**Berberine wellness goal**~~ — ✅ **DONE 2026-06-24.** Added 7th `wellness_goal` metaobject entry: label `Heart, liver and metabolic` · short_label **`Heart`** · description `Berberine support for heart, liver, and metabolic wellness routines.` (Active). Tagged **Berberine only** via `custom.wellness_goals`. Verified live: PDP "Heart" chip + shop Wellness-goals filter value both show (Berberine = only product). No homepage tile (expected — categories section is collection-driven, not goal-driven). All ADMIN, zero code.
+4. **Motion pass** — CSS scroll-reveal animations + **paper-grain overlay** (owner chose full motion). Dawn's `scroll-trigger`/`animate--*` already fire; add the brand reveal feel + grain.
+5. **Git commit** — NOTHING from the whole PDP + cleanup + content-files effort is committed yet (owner approves master commits). When ready: footer ©-strip + orphan deletions + `sahha-product.liquid` + `sahha-faq.liquid` + `templates/product.json` + `migration/content/*` + this status file.
+5. **Small/optional:** delete orphaned `sections/sahha-routine-finder.liquid` + `sections/sahha-product-details.liquid` (+ `snippets/sahha-card-badge.liquid` already deleted locally); verify white footer logo on real theme. Gallery `02–09` images already uploaded to products (confirmed via storefront `.js`).
+
+### 🛠️ Push/verify routine (every theme change)
+`HOMEBREW_NO_AUTO_UPDATE=1 /opt/homebrew/Cellar/shopify-cli/4.1.0/bin/shopify theme push --store sahhadaily.myshopify.com --theme 192337019213 --only <file>` → then **pull it back to /tmp and diff** (push can silent-no-op). NEVER push `config/settings_data.json` or pull-first `templates/*.json` (clobbers customizer/logo). Theme check stays 0 errors / 12 pre-existing warnings.
 
 ### 🎯 Still-open owner colour feedback (apply per-section as we go)
 - Body text tone on dark-green sections should be ivory `#F4F0E6` (some sections hardcode `--ink`).
@@ -208,11 +347,8 @@ Original design system reference: `SahhaDaily/src/app/globals.css`. Push CLI in 
 - Page bg should be `#F4F0E6` (was `#F6F2E9`) — owner fixes in customizer (can't push settings_data.json).
 
 ## 💡 Later ideas (owner-flagged)
-- **Add a 7th wellness goal for Berberine** (CC0530, the lone "Heart and Liver" product, currently
-  has NO goal — deliberately, the 6 goals don't cover heart/liver/metabolic). Owner wants a goal like
-  *"Heart, liver & metabolic"* (short label "Metabolic"/"Heart"); consider also tagging Omega-3 (CC0350).
-  **Zero code** — Routine Finder auto-builds a card per `wellness_goal` entry; just add the metaobject
-  entry + tag products. Flagged 2026-06-17.
+- ~~**7th wellness goal for Berberine**~~ — ✅ **DONE 2026-06-24** (see STILL LEFT #3). 7 goals now: Energy,
+  Immunity, Beauty, Calm, Joints, Family, **Heart**. Every product now in ≥1 goal.
 
 ## 🐞 Fixed during preview (2026-06-18)
 - **Experts bio modal was overlaying the whole site & blocking all clicks.** `.sahha-experts__modal`

@@ -1,0 +1,570 @@
+{%- comment -%}
+  Sahha Daily product hero — ports the live site's `.pdx` product detail
+  (SahhaDaily/src/app/product/[slug]/page.tsx + globals.css `.pdx-*`). Replaces
+  Dawn's `main-product` on the product template. Two-column editorial layout:
+  left = gallery (gradient frame, cut-out packshot vs full-bleed scene + thumbs),
+  right = info (category·SKU, Playfair title, stars, description, benefit chips,
+  buy card + trust row) + a tabbed How-to-use / Ingredients / Nutrition /
+  Good-to-know block below.
+
+  Real Shopify commerce: a `<product-form>` add-to-cart (single-variant catalog;
+  product-form.js gives AJAX cart-drawer, native POST fallback) PLUS an
+  "Order on WhatsApp" CTA. Long-form content comes from `product.metafields.custom.*`
+  (see migration/PHASE1_DATA_IMPORT.md).
+
+  Perf: the gallery frame is promoted to its own compositing layer (translateZ)
+  so its drop-shadow/box-shadow rasterise once and don't repaint on scroll.
+  REM ×1.6 for Dawn's 10px root; px/vw/% unchanged. See memory design-port-sahha.
+{%- endcomment -%}
+
+{%- liquid
+  assign m = product.metafields.custom
+  assign variant = product.selected_or_first_available_variant
+  assign rating = m.rating.value
+  assign reviews = m.review_count.value
+  assign benefits = m.benefits.value
+  assign key_features = m.key_features.value
+  assign goals = m.wellness_goals.value
+  assign how = m.how_to_use.value
+  assign why = m.why_use.value
+  assign ingredients = m.ingredients.value
+  assign safety = m.safety.value
+  assign nutrition = m.nutrition.value
+  assign notes = m.notes.value
+
+  assign sku = variant.sku
+  assign cat = product.type | default: product.vendor
+  assign wa_number = settings.whatsapp_number | remove: '+' | remove: ' ' | remove: '-'
+  assign wa_msg = 'Hi Sahha Daily! 🌿 I would like to order ' | append: product.title | url_encode
+  assign product_form_id = 'sahha-product-form-' | append: section.id
+
+  assign chips = benefits
+  if chips == blank
+    assign chips = key_features
+  endif
+-%}
+
+<section class="sahha-pdx color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}">
+  <div class="sahha-wide">
+    <a class="pdx-back" href="{{ routes.all_products_collection_url }}"><span class="ln">&larr; Back to shop</span></a>
+
+    <div class="pdx-grid">
+
+      {%- comment -%} ── Gallery ── {%- endcomment -%}
+      <div class="pdx-gallery" data-pdx-gallery>
+        {%- assign images = product.images -%}
+        {%- if images.size > 0 -%}
+          {%- assign lead = images.first -%}
+          <div class="pdx-media is-cutout" data-pdx-stage>
+            <img
+              src="{{ lead | image_url: width: 1100 }}"
+              alt="{{ product.title | escape }}"
+              width="1100" height="1122"
+              fetchpriority="high"
+              data-pdx-stage-img
+            >
+          </div>
+          {%- if images.size > 1 -%}
+            <div class="pdx-thumbs" role="group" aria-label="{{ product.title | escape }} images">
+              {%- for image in images -%}
+                <button
+                  type="button"
+                  class="pdx-thumb {% if forloop.first %}is-cutout on{% else %}is-scene{% endif %}"
+                  data-pdx-thumb
+                  data-full="{{ image | image_url: width: 1100 }}"
+                  data-cutout="{% if forloop.first %}true{% else %}false{% endif %}"
+                  aria-label="Show {{ product.title | escape }} image {{ forloop.index }}"
+                  aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+                >
+                  <img src="{{ image | image_url: width: 160 }}" alt="" loading="lazy" width="72" height="72">
+                </button>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        {%- else -%}
+          <div class="pdx-media is-cutout"><div class="blob"></div></div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} ── Info ── {%- endcomment -%}
+      <div class="pdx-info">
+        <div class="pdx-cat">{{ cat | escape }}{% if sku != blank %} <span class="pdx-cat-sku">&middot; {{ sku | escape }}</span>{% endif %}</div>
+        <h1 class="pdx-title">{{ product.title | escape }}</h1>
+
+        {%- if rating != blank -%}
+          {%- assign pct = rating | times: 20.0 -%}
+          <div class="rrow pdx-rrow">
+            <span class="stars" role="img" aria-label="{{ rating }} out of 5">
+              <span class="stars-empty" aria-hidden="true">★★★★★</span>
+              <span class="stars-fill" aria-hidden="true" style="width: {{ pct }}%;">★★★★★</span>
+            </span>
+            <span class="rcount">{{ rating }}{% if reviews != blank %} &middot; {{ reviews }} reviews{% endif %}</span>
+          </div>
+        {%- endif -%}
+
+        {%- if product.description != blank -%}
+          <div class="pdx-desc rte">{{ product.description }}</div>
+        {%- endif -%}
+
+        {%- if chips != blank -%}
+          <ul class="pdx-benefits">
+            {%- for b in chips limit: 3 -%}
+              <li>{{ b | strip | truncate: 46 }}</li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- comment -%} ── Buy card (real Shopify add-to-cart + WhatsApp) ── {%- endcomment -%}
+        <div class="pdx-buy">
+          <div class="pdx-buy-top">
+            <div class="pdx-price">
+              <span class="l">Price</span>
+              <span class="v">
+                {{ variant.price | money }}
+                {%- if variant.compare_at_price > variant.price -%}
+                  <s class="pdx-was">{{ variant.compare_at_price | money }}</s>
+                {%- endif -%}
+              </span>
+            </div>
+            {%- if variant.available -%}
+              <span class="pdx-stock"><span class="dot"></span>In stock</span>
+            {%- else -%}
+              <span class="pdx-stock is-out"><span class="dot"></span>Sold out</span>
+            {%- endif -%}
+          </div>
+
+          <product-form class="product-form pdx-form" data-section-id="{{ section.id }}" data-hide-errors="false">
+            <div class="product-form__error-message-wrapper" role="alert" hidden>
+              <span class="svg-wrapper">{{- 'icon-error.svg' | inline_asset_content -}}</span>
+              <span class="product-form__error-message"></span>
+            </div>
+
+            {%- form 'product', product, id: product_form_id, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+              <input
+                type="hidden"
+                name="id"
+                value="{{ variant.id }}"
+                {% if variant.available == false %}disabled{% endif %}
+                class="product-variant-id"
+              >
+
+              <div class="pdx-buy-actions">
+                <button
+                  type="submit"
+                  name="add"
+                  class="sahha-btn pdx-add"
+                  {% if variant.available == false %}disabled{% endif %}
+                >
+                  <span>
+                    {%- if variant == null -%}Unavailable
+                    {%- elsif variant.available == false -%}Sold out
+                    {%- else -%}Add to cart{%- endif -%}
+                  </span>
+                  {%- render 'loading-spinner' -%}
+                </button>
+
+                {%- if wa_number != blank -%}
+                  <a class="sahha-btn ghost pdx-wa" href="https://wa.me/{{ wa_number }}?text={{ wa_msg }}" target="_blank" rel="noopener">
+                    <span>
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                      Order on WhatsApp
+                    </span>
+                  </a>
+                {%- endif -%}
+              </div>
+            {%- endform -%}
+          </product-form>
+
+          <ul class="pdx-trust">
+            <li>
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 10h19" stroke="currentColor" stroke-width="1.6"/></svg>
+              Cash on delivery
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" aria-hidden="true"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6l7-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              100% original
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.3A8 8 0 1 1 20 11.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+              Fast WhatsApp support
+            </li>
+          </ul>
+        </div>
+
+        {%- if goals != blank -%}
+          <div class="pdx-goals">
+            <span class="pdx-goals-l">{{ section.settings.goals_heading | default: 'Fits these routines' }}</span>
+            <div class="pdx-goals-chips">
+              {%- for goal in goals -%}
+                <a class="pdx-chip" href="{{ routes.all_products_collection_url }}?filter.p.m.custom.wellness_goals={{ 'gid://shopify/Metaobject/' | append: goal.system.id | url_encode }}">
+                  {{ goal.short_label.value | default: goal.label.value }}
+                </a>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} ── Tabs ── {%- endcomment -%}
+    {%- assign has_good = false -%}
+    {%- if key_features != blank or notes != blank -%}{%- assign has_good = true -%}{%- endif -%}
+    {%- if how != blank or ingredients != blank or nutrition != blank or has_good -%}
+      <div class="pdx-tabs" data-pdx-tabs>
+        <div class="tabbar" role="tablist">
+          {%- assign tab_active = false -%}
+          {%- if how != blank -%}<button type="button" class="on" data-pdx-tab="how" role="tab" aria-selected="true">How to use</button>{%- assign tab_active = true -%}{%- endif -%}
+          {%- if ingredients != blank or nutrition != blank -%}<button type="button"{% unless tab_active %} class="on"{% endunless %} data-pdx-tab="facts" role="tab" aria-selected="{% if tab_active %}false{% else %}true{% endif %}">Ingredients &amp; Nutrition</button>{%- assign tab_active = true -%}{%- endif -%}
+          {%- if has_good -%}<button type="button"{% unless tab_active %} class="on"{% endunless %} data-pdx-tab="good" role="tab" aria-selected="{% if tab_active %}false{% else %}true{% endif %}">Good to know</button>{%- assign tab_active = true -%}{%- endif -%}
+        </div>
+
+        {%- assign pane_shown = false -%}
+        {%- if how != blank -%}
+          <div class="tabpane" data-pdx-pane="how">
+            <p class="pdx-lead">{{ how | newline_to_br }}</p>
+            {%- if why != blank -%}
+              <ul class="pdx-list">{%- for r in why -%}<li>{{ r }}</li>{%- endfor -%}</ul>
+            {%- endif -%}
+          </div>
+          {%- assign pane_shown = true -%}
+        {%- endif -%}
+
+        {%- assign has_facts = false -%}
+        {%- if ingredients != blank or nutrition != blank -%}{%- assign has_facts = true -%}{%- endif -%}
+        {%- if has_facts or safety != blank -%}
+          {%- assign facts_split = false -%}
+          {%- if has_facts and safety != blank -%}{%- assign facts_split = true -%}{%- endif -%}
+          <div class="tabpane pdx-facts{% if facts_split %} is-split{% endif %}" data-pdx-pane="facts"{% if pane_shown %} hidden{% endif %}>
+            {%- if has_facts -%}
+              <div class="pdx-facts-main">
+                {%- if ingredients != blank -%}<p class="pdx-lead">{{ ingredients | newline_to_br }}</p>{%- endif -%}
+                {%- if nutrition != blank -%}
+                <p class="pdx-subh">Nutritional information</p>
+              {%- comment -%}
+                Supplement-facts table. Lines in custom.nutrition:
+                  "# Serving size: 1 capsule · Servings per container: 120"  → caption bar
+                  "Berberine | 500 mg | *"   → data row (Nutrient | Per serving | %NRV)
+                  "Vitamin D3: 25 µg"        → data row (legacy colon form, 2 cols)
+                  "+ Other ingredients: …"   → footer note
+              {%- endcomment -%}
+              {%- assign has_nrv = false -%}
+              {%- for row in nutrition -%}
+                {%- assign t = row | strip -%}
+                {%- assign c0 = t | slice: 0 -%}
+                {%- unless c0 == '#' or c0 == '+' -%}
+                  {%- if t contains ' | ' -%}
+                    {%- assign p = t | split: ' | ' -%}
+                    {%- if p.size >= 3 -%}{%- assign has_nrv = true -%}{%- endif -%}
+                  {%- endif -%}
+                {%- endunless -%}
+              {%- endfor -%}
+
+              <div class="pdx-sf{% if has_nrv %} has-nrv{% endif %}">
+                {%- assign header_done = false -%}
+                {%- for row in nutrition -%}
+                  {%- assign t = row | strip -%}
+                  {%- if t == '' -%}{%- continue -%}{%- endif -%}
+                  {%- assign c0 = t | slice: 0 -%}
+                  {%- if c0 == '#' -%}
+                    <div class="pdx-sf-cap">{{ t | remove_first: '#' | strip }}</div>
+                  {%- elsif c0 == '+' -%}
+                    <div class="pdx-sf-note">{{ t | remove_first: '+' | strip }}</div>
+                  {%- else -%}
+                    {%- unless header_done -%}
+                      <div class="pdx-sf-head">
+                        <span class="n"></span>
+                        <span class="a">Per serving</span>
+                        {%- if has_nrv -%}<span class="v">%NRV</span>{%- endif -%}
+                      </div>
+                      {%- assign header_done = true -%}
+                    {%- endunless -%}
+                    {%- assign nut = '' -%}{%- assign amt = '' -%}{%- assign nrv = '' -%}
+                    {%- if t contains ' | ' -%}
+                      {%- assign p = t | split: ' | ' -%}
+                      {%- assign nut = p[0] | strip -%}
+                      {%- assign amt = p[1] | strip -%}
+                      {%- if p.size >= 3 -%}{%- assign nrv = p[2] | strip -%}{%- endif -%}
+                    {%- elsif t contains ': ' -%}
+                      {%- assign nut = t | split: ': ' | first | strip -%}
+                      {%- assign amt = t | remove_first: nut | remove_first: ': ' | strip -%}
+                    {%- else -%}
+                      {%- assign nut = t -%}
+                    {%- endif -%}
+                    <div class="pdx-sf-row">
+                      <span class="n">{{ nut }}</span>
+                      <span class="a">{{ amt }}</span>
+                      {%- if has_nrv -%}<span class="v">{{ nrv }}</span>{%- endif -%}
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+            {%- if safety != blank -%}
+              <div class="pdx-facts-aside">
+                <p class="pdx-subh">Safety advice</p>
+                <div class="pdx-callout">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 8h.01M11 12h1v4h1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span>{{ safety | newline_to_br }}</span>
+                </div>
+              </div>
+            {%- endif -%}
+          </div>
+          {%- assign pane_shown = true -%}
+        {%- endif -%}
+
+        {%- if has_good -%}
+          <div class="tabpane" data-pdx-pane="good"{% if pane_shown %} hidden{% endif %}>
+            {%- if key_features != blank -%}
+              <ul class="pdx-list">{%- for k in key_features -%}<li>{{ k }}</li>{%- endfor -%}</ul>
+            {%- endif -%}
+            {%- if notes != blank -%}
+              <div class="pdx-callout">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 8h.01M11 12h1v4h1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>{{ notes | newline_to_br }}</span>
+              </div>
+            {%- endif -%}
+          </div>
+          {%- assign pane_shown = true -%}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+<script type="application/ld+json">
+  {{ product | structured_data }}
+</script>
+
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+<script>
+  (function () {
+    var root = document.querySelector('[data-section-id="{{ section.id }}"]');
+    if (!root) return;
+
+    // Gallery: swap the stage image + cut-out/scene frame on thumb click.
+    var stage = root.querySelector('[data-pdx-stage]');
+    var stageImg = root.querySelector('[data-pdx-stage-img]');
+    var thumbs = root.querySelectorAll('[data-pdx-thumb]');
+    // Preload every full-size gallery image so a thumb click swaps instantly
+    // (otherwise the old image lingers for seconds while the new one downloads).
+    thumbs.forEach(function (btn) {
+      var pre = new Image();
+      pre.src = btn.getAttribute('data-full');
+    });
+    thumbs.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!stage || !stageImg) return;
+        var full = btn.getAttribute('data-full');
+        var cutout = btn.getAttribute('data-cutout') === 'true';
+        thumbs.forEach(function (t) {
+          t.classList.toggle('on', t === btn);
+          t.setAttribute('aria-pressed', t === btn ? 'true' : 'false');
+        });
+        if (stageImg.getAttribute('src') === full) return;
+        // Fade out, then swap + fade in only once the new image is decoded
+        // (instant when it's already preloaded/cached → no lag, no stale frame).
+        stageImg.style.opacity = '0';
+        var show = function () {
+          stageImg.src = full;
+          stage.classList.toggle('is-cutout', cutout);
+          stage.classList.toggle('is-scene', !cutout);
+          stageImg.style.opacity = '1';
+        };
+        var loader = new Image();
+        loader.onload = show;
+        loader.onerror = show;
+        loader.src = full;
+      });
+    });
+
+    // Tabs.
+    var tabWrap = root.querySelector('[data-pdx-tabs]');
+    if (tabWrap) {
+      var tabBtns = tabWrap.querySelectorAll('[data-pdx-tab]');
+      var panes = tabWrap.querySelectorAll('[data-pdx-pane]');
+      tabBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = btn.getAttribute('data-pdx-tab');
+          tabBtns.forEach(function (b) {
+            var on = b === btn;
+            b.classList.toggle('on', on);
+            b.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+          panes.forEach(function (p) {
+            p.hidden = p.getAttribute('data-pdx-pane') !== id;
+          });
+        });
+      });
+    }
+  })();
+</script>
+
+{% stylesheet %}
+.sahha-pdx { padding-top: clamp(28px, 4vw, 56px); padding-bottom: clamp(64px, 8vw, 120px); background-color: rgb(var(--color-background)); }
+.sahha-pdx .sahha-wide { width: min(100% - 2 * var(--gutter), 1560px); margin-inline: auto; }
+
+/* back link */
+.pdx-back { display: inline-flex; align-items: center; margin-bottom: clamp(22px, 3vw, 40px); color: var(--green); font-weight: 700; font-size: 1.456rem; text-decoration: none; }
+.pdx-back .ln { position: relative; }
+.pdx-back .ln::after { content: ""; position: absolute; left: 0; bottom: -3px; height: 1.5px; width: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .4s var(--ease); }
+.pdx-back:hover .ln::after { transform: scaleX(1); }
+
+.pdx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(36px, 5vw, 84px); align-items: start; }
+
+/* ── gallery ── */
+.pdx-gallery { display: flex; flex-direction: column; gap: 14px; }
+.pdx-media {
+  position: relative; aspect-ratio: 1 / 1.02; border-radius: var(--r-xl);
+  background: radial-gradient(120% 100% at 50% 30%, var(--tint-mint), var(--tint-sage) 80%);
+  display: grid; place-items: center; overflow: hidden; box-shadow: var(--brand-shadow-sm);
+  transition: background .4s var(--ease);
+  /* promote to its own layer so the shadows/filters rasterise once (no scroll repaint) */
+  transform: translateZ(0); will-change: transform; contain: paint;
+}
+.pdx-media img { position: relative; z-index: 2; transition: opacity .3s var(--ease); }
+.pdx-media.is-cutout img { width: 78%; height: 78%; object-fit: contain; filter: drop-shadow(0 26px 30px rgba(28, 60, 42, 0.22)); }
+.pdx-media.is-scene { background: var(--tint-cream); }
+.pdx-media.is-scene img { width: 100%; height: 100%; object-fit: cover; filter: none; }
+.pdx-media .blob { width: 60%; aspect-ratio: 1; background: rgba(255, 255, 255, 0.5); border-radius: 50%; }
+
+.pdx-thumbs { display: flex; flex-wrap: wrap; gap: 10px; }
+.pdx-thumb { width: 72px; height: 72px; border-radius: var(--r-md); border: 1px solid var(--line); background: var(--tint-cream); cursor: pointer; overflow: hidden; padding: 0; transition: border-color .3s var(--ease), box-shadow .3s var(--ease); }
+.pdx-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pdx-thumb.is-cutout { background: var(--tint-mint); padding: 6px; }
+.pdx-thumb.is-cutout img { object-fit: contain; }
+.pdx-thumb:hover { border-color: var(--line-2); }
+.pdx-thumb.on { border-color: var(--green); box-shadow: var(--brand-shadow-sm); }
+
+/* ── info ── */
+.pdx-info { max-width: 560px; }
+.pdx-cat { font-size: 1.184rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--olive); font-weight: 800; }
+.pdx-cat-sku { color: var(--muted); }
+.pdx-title { font-family: var(--serif); font-weight: 500; font-size: clamp(3.04rem, 3.4vw, 4.6rem); line-height: 1.05; margin: 14px 0 16px; letter-spacing: -0.015em; color: var(--green); }
+.pdx-rrow { margin-bottom: 20px; }
+.pdx-desc { color: var(--ink-soft); font-size: 1.664rem; line-height: 1.65; margin: 0 0 26px; max-width: 46ch; }
+.pdx-desc p { margin: 0 0 0.6em; }
+.pdx-desc p:last-child { margin-bottom: 0; }
+
+.pdx-benefits { list-style: none; display: flex; flex-wrap: wrap; gap: 9px; margin: 0 0 30px; padding: 0; }
+.pdx-benefits li { display: inline-flex; align-items: center; gap: 9px; padding: 10px 17px; border-radius: var(--r-pill); background: var(--tint-mint); color: var(--green); font-weight: 700; font-size: 1.344rem; line-height: 1.2; }
+.pdx-benefits li::before { content: ""; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+/* buy card */
+.pdx-buy { padding: clamp(20px, 2vw, 28px); border-radius: var(--r-lg); background: var(--paper-2); border: 1px solid var(--line); box-shadow: var(--brand-shadow-sm); }
+.pdx-buy-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+.pdx-price { display: flex; flex-direction: column; gap: 2px; }
+.pdx-price .l { font-size: 1.152rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.pdx-price .v { font-family: var(--serif); font-size: 2.4rem; color: var(--accent); font-weight: 600; display: inline-flex; align-items: baseline; gap: 10px; line-height: 1.1; }
+.pdx-was { color: var(--muted); font-size: 1.504rem; font-weight: 500; text-decoration: line-through; }
+.pdx-stock { display: inline-flex; align-items: center; gap: 8px; font-size: 1.28rem; font-weight: 700; color: var(--green); }
+.pdx-stock .dot { width: 9px; height: 9px; border-radius: 50%; background: #2E9E5B; box-shadow: 0 0 0 4px rgba(46, 158, 91, 0.16); }
+.pdx-stock.is-out { color: var(--muted); }
+.pdx-stock.is-out .dot { background: #B23A1E; box-shadow: 0 0 0 4px rgba(178, 58, 30, 0.14); }
+
+.pdx-form { width: 100%; }
+.pdx-form .form { margin: 0; }
+.pdx-buy-actions { display: flex; gap: 10px; width: 100%; }
+.pdx-buy-actions .sahha-btn { flex: 1; padding-inline: 18px; }
+.pdx-add[disabled] { opacity: .55; cursor: not-allowed; }
+.product-form__error-message-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: #B23A1E; font-size: 1.36rem; }
+.product-form__error-message-wrapper[hidden] { display: none; }
+
+.pdx-trust { list-style: none; margin: 18px 0 0; padding: 16px 0 0; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 10px 22px; }
+.pdx-trust li { display: inline-flex; align-items: center; gap: 8px; font-size: 1.248rem; font-weight: 600; color: var(--ink-soft); }
+.pdx-trust svg { color: var(--green); flex: none; }
+
+/* fits-these-routines chips */
+.pdx-goals { margin-top: 28px; }
+.pdx-goals-l { display: block; font-size: 1.152rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.pdx-goals-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.pdx-chip { display: inline-flex; align-items: center; padding: 9px 16px; border-radius: var(--r-pill); background: var(--tint-green); border: 1px solid var(--line); color: var(--green); font-weight: 700; font-size: 1.36rem; text-decoration: none; transition: background .3s var(--ease), color .3s var(--ease); }
+.pdx-chip:hover { background: var(--green); color: #fff; }
+
+/* ── tabs ── */
+.pdx-tabs { margin-top: clamp(56px, 7vw, 104px); }
+.pdx-tabs .tabbar { display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid var(--line); margin-bottom: 34px; }
+.pdx-tabs .tabbar button { position: relative; padding: 13px 24px; border: none; background: transparent; color: var(--muted); font-family: var(--font-body-family); font-weight: 800; font-size: 1.456rem; letter-spacing: .01em; border-radius: var(--r-md) var(--r-md) 0 0; cursor: pointer; transition: color .25s var(--ease), background .25s var(--ease); }
+.pdx-tabs .tabbar button:hover { color: var(--green); background: var(--tint-cream); }
+.pdx-tabs .tabbar button.on { color: var(--green); background: var(--tint-mint); }
+.pdx-tabs .tabbar button.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; background: var(--accent); border-radius: 3px; }
+
+.pdx-tabs .tabpane { display: block; max-width: 860px; animation: pdxFade .4s var(--ease); }
+.pdx-tabs .tabpane[hidden] { display: none; }
+@keyframes pdxFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* lead paragraph */
+.pdx-lead { color: var(--muted); font-size: 1.728rem; line-height: 1.7; margin: 0; max-width: 62ch; font-weight: 500; }
+.pdx-subh { display: flex; align-items: center; gap: 11px; margin: 0 0 16px; font-size: 1.184rem; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; color: var(--green); }
+.pdx-subh::before { content: ""; width: 20px; height: 2px; border-radius: 2px; background: var(--accent); flex: none; }
+.pdx-facts.is-split { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(30px, 4vw, 64px); align-items: start; max-width: 1080px; }
+.pdx-facts-main { max-width: 56ch; }
+.pdx-facts.is-split .pdx-facts-main { max-width: none; }
+.pdx-facts .pdx-lead + .pdx-subh { margin-top: 26px; }
+.pdx-facts-aside .pdx-callout { margin-top: 0; }
+@media (max-width: 820px) { .pdx-facts.is-split { grid-template-columns: 1fr; gap: 32px; max-width: none; } }
+
+/* feature list — soft cards with a short accent rule (no checkmarks) */
+.pdx-list { list-style: none; padding: 0; margin: 24px 0 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.pdx-list li { padding: 18px 20px; border-radius: var(--r-md); background: var(--tint-cream); border: 1px solid var(--line); color: var(--green); font-size: 1.5rem; line-height: 1.5; font-weight: 600; }
+.pdx-list li::before { content: ""; display: block; width: 26px; height: 3px; border-radius: 3px; background: var(--accent); margin-bottom: 12px; }
+
+/* nutrition — branded supplement-facts table */
+.pdx-sf { max-width: 580px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--paper-2); overflow: hidden; }
+.pdx-sf-cap { padding: 14px 18px; background: var(--tint-mint); color: var(--green); font-weight: 800; font-size: 1.36rem; line-height: 1.45; border-bottom: 1px solid var(--line); }
+.pdx-sf-head { display: flex; align-items: baseline; gap: 16px; padding: 11px 18px; border-bottom: 2px solid var(--green); }
+.pdx-sf-head .n { flex: 1; }
+.pdx-sf-head .a, .pdx-sf-head .v { color: var(--green); font-weight: 800; font-size: 1.12rem; letter-spacing: .06em; text-transform: uppercase; text-align: right; }
+.pdx-sf-head .a { width: 130px; }
+.pdx-sf-head .v { width: 78px; }
+.pdx-sf-row { display: flex; align-items: baseline; gap: 16px; padding: 13px 18px; border-bottom: 1px dashed var(--line); }
+.pdx-sf-row .n { flex: 1; color: var(--muted); font-weight: 600; font-size: 1.5rem; line-height: 1.4; }
+.pdx-sf-row .a { width: 130px; text-align: right; color: var(--green); font-weight: 800; font-size: 1.5rem; }
+.pdx-sf-row .v { width: 78px; text-align: right; color: var(--muted); font-weight: 700; font-size: 1.408rem; }
+.pdx-sf-note { padding: 12px 18px; background: var(--tint-cream); color: var(--muted); font-size: 1.28rem; line-height: 1.55; }
+.pdx-sf-note + .pdx-sf-note { padding-top: 0; }
+@media (max-width: 600px) {
+  .pdx-sf-cap, .pdx-sf-head, .pdx-sf-row, .pdx-sf-note { padding-left: 14px; padding-right: 14px; }
+  .pdx-sf-head, .pdx-sf-row { gap: 10px; }
+  .pdx-sf-head .a, .pdx-sf-row .a { width: 76px; }
+  .pdx-sf-head .v, .pdx-sf-row .v { width: 50px; }
+}
+
+/* safety / notes callout */
+.pdx-callout { margin-top: 24px; display: flex; gap: 13px; align-items: flex-start; padding: 18px 20px; border-radius: var(--r-md); background: var(--tint-peach); border: 1px solid var(--accent-soft); color: var(--ink-soft); font-size: 1.504rem; line-height: 1.6; max-width: 62ch; }
+.pdx-callout svg { color: var(--accent); flex: none; margin-top: 2px; }
+.pdx-callout span { display: block; }
+
+@media (max-width: 980px) {
+  .pdx-grid { grid-template-columns: 1fr; gap: clamp(28px, 6vw, 44px); }
+  .pdx-gallery { position: static; max-width: 520px; margin-inline: auto; width: 100%; }
+  .pdx-info { max-width: none; }
+}
+@media (max-width: 600px) {
+  .pdx-buy-actions { flex-direction: column; }
+  .pdx-trust { gap: 10px 16px; }
+  .pdx-list { grid-template-columns: 1fr; }
+  .pdx-tabs .tabbar { gap: 4px; }
+  .pdx-tabs .tabbar button { padding: 11px 15px; font-size: 1.3rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pdx-media img, .pdx-media, .pdx-chip, .pdx-thumb, .pdx-back .ln::after { transition: none; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sahha Product",
+  "tag": "section",
+  "class": "sahha-product-section",
+  "settings": [
+    { "type": "paragraph", "content": "Editorial product hero (gallery + info + add-to-cart + WhatsApp) and a How-to-use / Ingredients / Nutrition / Good-to-know tab block, all from the product's images and custom.* metafields." },
+    { "type": "text", "id": "goals_heading", "label": "Routines label", "default": "Fits these routines" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "Sahha Product" }]
+}
+{% endschema %}
