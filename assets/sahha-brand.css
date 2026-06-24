@@ -755,3 +755,46 @@ h1, h2, h3, h4, h5, h6,
      card edge (the "bug"). Make the form fill the panel instead. */
   .sahha-shop .facets__form-vertical { width: 100%; box-sizing: border-box; }
 }
+
+/* =============================================================
+   MOTION — subtle scroll-reveal (homepage) + paper-grain overlay
+   Hidden state lives here (in <head> via sahha-brand.css) so there's no
+   flash-of-content; snippets/sahha-motion.liquid flips `.is-in` on scroll.
+   Scoped to body.sahha-home (index template only, for now). The hero
+   (first section) is left visible; everything after it gently fades + rises.
+   ============================================================= */
+.sahha-home #MainContent > .shopify-section:not(:first-child) {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+  will-change: opacity, transform;
+}
+.sahha-home #MainContent > .shopify-section.is-in {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sahha-home #MainContent > .shopify-section {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none;
+  }
+}
+
+/* Paper-grain: a faint fixed noise texture over the warm paper, for a printed
+   "editorial" feel (matches the live site). pointer-events:none so it never
+   blocks clicks; multiply blend keeps it subtle on light + dark sections. */
+.sahha-home::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sahha-home::after { opacity: 0.035; }
+}

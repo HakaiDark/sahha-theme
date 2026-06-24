@@ -334,7 +334,14 @@ would reset prices/images/inventory.)
    - 💡 Gotcha: the `product-images-png` gallery assets are WeightWorld marketing images and **may not match the exact pack size**
      (the D3+K2 365-image was initially in a "240" folder). Worth a per-product glance when wiring PDP galleries.
 3. ~~**Berberine wellness goal**~~ — ✅ **DONE 2026-06-24.** Added 7th `wellness_goal` metaobject entry: label `Heart, liver and metabolic` · short_label **`Heart`** · description `Berberine support for heart, liver, and metabolic wellness routines.` (Active). Tagged **Berberine only** via `custom.wellness_goals`. Verified live: PDP "Heart" chip + shop Wellness-goals filter value both show (Berberine = only product). No homepage tile (expected — categories section is collection-driven, not goal-driven). All ADMIN, zero code.
-4. **Motion pass** — CSS scroll-reveal animations + **paper-grain overlay** (owner chose full motion). Dawn's `scroll-trigger`/`animate--*` already fire; add the brand reveal feel + grain.
+4. **Motion pass** — ⏳ **HOMEPAGE DONE 2026-06-24 (subtle, owner's choice); PDP + catalog still pending.**
+   - Custom self-contained system (NOT Dawn's `animations_reveal_on_scroll`, to avoid the settings_data.json push + scope to homepage):
+     `body.sahha-home` hook (theme.liquid, index only) + `snippets/sahha-motion.liquid` (IntersectionObserver flips `.is-in`) +
+     reveal/grain CSS in `sahha-brand.css`. Each section after the hero **fades + rises** on scroll-in; hero stays visible.
+   - **Paper-grain**: `.sahha-home::after` fixed SVG fractal-noise overlay, opacity 0.045, multiply blend, pointer-events:none.
+   - **Safety**: hidden state is in `<head>` CSS (no FOUC); `<noscript>` + no-IntersectionObserver fallback reveal everything so
+     content is never stuck invisible; `prefers-reduced-motion` disables it. CDP-verified (sections 0→1 on scroll, grain present).
+   - NEXT: extend to PDP + catalog if owner likes the homepage feel.
 5. **Git commit** — NOTHING from the whole PDP + cleanup + content-files effort is committed yet (owner approves master commits). When ready: footer ©-strip + orphan deletions + `sahha-product.liquid` + `sahha-faq.liquid` + `templates/product.json` + `migration/content/*` + this status file.
 5. **Small/optional:** delete orphaned `sections/sahha-routine-finder.liquid` + `sections/sahha-product-details.liquid` (+ `snippets/sahha-card-badge.liquid` already deleted locally); verify white footer logo on real theme. Gallery `02–09` images already uploaded to products (confirmed via storefront `.js`).
 
