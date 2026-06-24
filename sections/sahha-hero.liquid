@@ -50,9 +50,7 @@
       <div class="sahha-hx__cta">
         {%- if section.settings.button_label != blank -%}
           <a class="sahha-btn accent" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">
-            <span>{{ section.settings.button_label }}
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
+            <span>{{ section.settings.button_label }}</span>
           </a>
         {%- endif -%}
         {%- if section.settings.button_label_2 != blank -%}
@@ -205,8 +203,13 @@
   .sahha-hx__visual { max-width: 420px; }
   .sahha-hx__pill { padding: 9px 13px; }
   .sahha-hx__pill .tx b { font-size: 1.248rem; } .sahha-hx__pill .tx span { font-size: 1.056rem; }
-  .sahha-hx__cta { gap: 10px; }
-  .sahha-hx__cta .sahha-btn { flex: 1; min-width: 0; justify-content: center; }
+  .sahha-hx__cta { gap: 10px; flex-wrap: nowrap; }
+  /* both CTAs sit on one row, each label on a single line (no "Shop"/"products" wrap) */
+  .sahha-hx__cta .sahha-btn { flex: 1; min-width: 0; justify-content: center; padding-inline: 12px; font-size: 1.34rem; }
+  .sahha-hx__cta .sahha-btn span { white-space: nowrap; }
+}
+@media (max-width: 400px) {
+  .sahha-hx__cta .sahha-btn { font-size: 1.2rem; padding-inline: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .sahha-hx__prod, .sahha-hx__orb, .sahha-hx__pill { animation: none; }
