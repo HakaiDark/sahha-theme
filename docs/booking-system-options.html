@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sahha Daily — Booking System Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #f4f0e6;
+    --paper-2: #fbf9f2;
+    --cream: #ebe4d4;
+    --sand: #e3dac6;
+    --ink: #18211b;
+    --ink-soft: #38453b;
+    --green: #2e5b3f;
+    --green-deep: #1c3c2a;
+    --olive: #6e8b5a;
+    --accent: #e0744a;
+    --accent-deep: #c45d34;
+    --muted: #5c6a60;
+    --line: rgba(28, 60, 42, 0.16);
+    --r-sm: 10px;
+    --r-md: 18px;
+    --r-lg: 28px;
+    --serif: "Playfair Display", Georgia, serif;
+    --body: "Tajawal", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --shadow: 0 18px 50px -30px rgba(28, 60, 42, 0.45);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: var(--body);
+    color: var(--ink-soft);
+    background: var(--paper);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* ---- Hero ---- */
+  .hero {
+    background: linear-gradient(160deg, var(--green) 0%, var(--green-deep) 100%);
+    color: #fff;
+    padding: 64px 24px 72px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
+    opacity: .5;
+  }
+  .hero-inner { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: .32em; font-size: 12px; font-weight: 700;
+    color: #dce8d2; margin: 0 0 18px;
+  }
+  .hero h1 {
+    font-family: var(--serif); font-weight: 600; font-size: clamp(34px, 5.5vw, 56px);
+    line-height: 1.05; margin: 0 0 18px; color: #fff;
+  }
+  .hero h1 em { color: var(--accent); font-style: italic; }
+  .hero p { font-size: 18px; color: rgba(255,255,255,0.85); margin: 0 auto; max-width: 620px; }
+  .hero .meta { margin-top: 26px; font-size: 13px; letter-spacing: .04em; color: rgba(255,255,255,0.6); }
+
+  /* ---- Sections ---- */
+  section { margin-top: 56px; }
+  h2 {
+    font-family: var(--serif); font-weight: 600; color: var(--green);
+    font-size: clamp(24px, 3.4vw, 34px); line-height: 1.15; margin: 0 0 8px;
+  }
+  h2 em { font-style: italic; color: var(--accent); }
+  .lead { font-size: 17px; color: var(--ink-soft); max-width: 760px; margin: 0 0 28px; }
+  p { margin: 0 0 14px; }
+
+  .callout {
+    background: var(--paper-2); border: 1px solid var(--line); border-left: 5px solid var(--accent);
+    border-radius: var(--r-md); padding: 22px 26px; margin: 28px 0;
+    box-shadow: var(--shadow);
+  }
+  .callout strong { color: var(--green); }
+
+  /* ---- Option cards ---- */
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .card {
+    background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--r-lg);
+    padding: 26px 24px; display: flex; flex-direction: column;
+    box-shadow: var(--shadow); position: relative;
+  }
+  .card.featured { border-color: var(--green); box-shadow: 0 22px 60px -28px rgba(46,91,63,0.6); }
+  .card .ribbon {
+    position: absolute; top: -13px; left: 24px; background: var(--green); color: #fff;
+    font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 999px;
+  }
+  .card .ico { font-size: 30px; line-height: 1; margin-bottom: 12px; }
+  .card h3 { font-family: var(--serif); font-weight: 600; color: var(--green); font-size: 22px; margin: 0 0 4px; }
+  .card .tag { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
+  .price-pill {
+    display: inline-block; align-self: flex-start; background: var(--cream); color: var(--green-deep);
+    font-weight: 700; font-size: 14px; padding: 7px 14px; border-radius: 999px; margin-bottom: 18px;
+  }
+  .price-pill.free { background: #dce8d2; }
+  .price-pill.paid { background: #f6d8c9; color: var(--accent-deep); }
+  ul.list { list-style: none; padding: 0; margin: 0 0 16px; }
+  ul.list li { position: relative; padding-left: 26px; margin-bottom: 9px; font-size: 14.5px; }
+  ul.list li::before {
+    position: absolute; left: 0; top: 0; font-weight: 700;
+  }
+  ul.pro li::before { content: "✓"; color: var(--green); }
+  ul.con li::before { content: "✕"; color: var(--accent-deep); }
+  .best {
+    margin-top: auto; padding-top: 16px; border-top: 1px dashed var(--line);
+    font-size: 13.5px; color: var(--ink);
+  }
+  .best b { color: var(--green); }
+
+  /* ---- Table ---- */
+  .table-scroll { overflow-x: auto; border-radius: var(--r-md); border: 1px solid var(--line); box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; min-width: 720px; background: var(--paper-2); font-size: 14.5px; }
+  th, td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  thead th { background: var(--green); color: #fff; font-family: var(--serif); font-weight: 600; font-size: 15px; }
+  thead th:first-child { border-top-left-radius: var(--r-md); }
+  thead th:last-child { border-top-right-radius: var(--r-md); }
+  tbody tr:nth-child(even) { background: rgba(235,228,212,0.4); }
+  tbody td:first-child { font-weight: 700; color: var(--ink); width: 210px; }
+  .yes { color: var(--green); font-weight: 700; }
+  .no { color: var(--accent-deep); font-weight: 700; }
+
+  /* ---- Steps / anti-spam ---- */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .panel {
+    background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--r-md);
+    padding: 24px; box-shadow: var(--shadow);
+  }
+  .panel h3 { font-family: var(--serif); color: var(--green); font-size: 19px; margin: 0 0 12px; font-weight: 600; }
+  .panel ol { margin: 0; padding-left: 20px; }
+  .panel ol li { margin-bottom: 8px; }
+  .shield { display:inline-block; background:#dce8d2; color:var(--green-deep); font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px; margin-right:6px; }
+
+  /* ---- Decision tree ---- */
+  .tree { display: grid; gap: 14px; }
+  .branch {
+    display: flex; gap: 16px; align-items: flex-start;
+    background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--r-md); padding: 20px 22px;
+  }
+  .branch .q { font-weight: 700; color: var(--ink); }
+  .branch .a { color: var(--green); font-weight: 700; white-space: nowrap; }
+  .branch .arrow { color: var(--accent); font-weight: 700; }
+
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); text-align: center; }
+
+  @media (max-width: 820px) {
+    .cards, .grid2 { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { background: #fff; font-size: 12px; }
+    .hero { padding: 36px 20px; }
+    .card, .panel, .callout, .table-scroll { box-shadow: none; break-inside: avoid; }
+    section { margin-top: 30px; }
+    .hero::after { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">Sahha Daily · Internal Planning</p>
+    <h1>Expert Booking System — <em>Options</em></h1>
+    <p>How customers will book a consultation with our experts: see availability, pick an open time slot, and get a meeting link automatically — no account needed, and protected from spam.</p>
+    <p class="meta">Prepared June 2026 · For review with our associate · Prices verified June 2026</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <h2>What we're building</h2>
+    <p class="lead">A simple "Book a Consultation" page on the website where a customer chooses an expert, sees that expert's open time slots for a chosen date, books one, and instantly receives a video-meeting link. The expert and customer both get a calendar invite and reminders — automatically.</p>
+    <div class="callout">
+      <strong>Important design note:</strong> customers will see <strong>open slots only</strong> — never other people's bookings (that's private). Booked slots simply disappear from the grid. We (and each expert) see the full schedule on our side. Same goal, done the privacy-safe way.
+    </div>
+    <p class="lead" style="margin-bottom:0;">We will <strong>not</strong> build a booking engine from scratch — storing availability, preventing double-bookings, generating meeting links, sending reminders and blocking spam are exactly what dedicated tools already do for free or cheap. We simply connect one to a beautifully branded page on our site.</p>
+  </section>
+
+  <section>
+    <h2>The three options <em>at a glance</em></h2>
+    <div class="cards">
+
+      <div class="card featured">
+        <span class="ribbon">Lowest cost</span>
+        <div class="ico">🗓️</div>
+        <h3>Cal.com</h3>
+        <p class="tag">Free scheduling tool, embedded on our own page</p>
+        <span class="price-pill free">$0 / month</span>
+        <ul class="list pro">
+          <li>One free account <b>per expert</b> = $0 for any number of experts</li>
+          <li>Auto Google Meet / Zoom links</li>
+          <li>Email <b>and</b> SMS reminders included free</li>
+          <li>Fully branded — we build the page in Sahha's look</li>
+          <li>Built-in anti-spam (email verify, captcha, limits)</li>
+        </ul>
+        <ul class="list con">
+          <li>Each expert manages a separate login (one-time setup)</li>
+          <li>No single combined dashboard (unless paid Teams)</li>
+        </ul>
+        <p class="best"><b>Best for:</b> strictly $0, full design control, "customer picks the expert."</p>
+      </div>
+
+      <div class="card">
+        <div class="ico">🛍️</div>
+        <h3>Cowlendar</h3>
+        <p class="tag">Booking app, all inside Shopify admin</p>
+        <span class="price-pill paid">≈ $14–30 / month</span>
+        <ul class="list pro">
+          <li>Everything managed in <b>one</b> Shopify dashboard</li>
+          <li>Multiple staff with individual availability</li>
+          <li>Google Calendar + Zoom/Meet, email reminders</li>
+          <li>Flat fee — same price no matter how many experts</li>
+          <li>Native popup, near-zero technical setup</li>
+        </ul>
+        <ul class="list con">
+          <li>Free tier is testing only (5 bookings/month)</li>
+          <li>Monthly cost; limited design control of the popup</li>
+        </ul>
+        <p class="best"><b>Best for:</b> "all in one place," willing to pay a flat monthly fee.</p>
+      </div>
+
+      <div class="card">
+        <div class="ico">📧</div>
+        <h3>Google Workspace</h3>
+        <p class="tag">Appointment Scheduling, built into Google Calendar</p>
+        <span class="price-pill">$0 extra* / $7–14 user</span>
+        <ul class="list pro">
+          <li><b>Free if experts already use Google Workspace</b> for email</li>
+          <li>Most seamless Google Meet + Gmail + Calendar flow</li>
+          <li>Embeds on our website (button or inline calendar)</li>
+          <li>Email verification + up to 5 reminders, Stripe payments</li>
+          <li>Each expert gets their own booking page</li>
+        </ul>
+        <ul class="list con">
+          <li>Needs Workspace per expert ($7–14/user/mo) if not already</li>
+          <li>No native round-robin; less custom styling than Cal.com</li>
+        </ul>
+        <p class="best"><b>Best for:</b> experts already on (or wanting) pro Google email @sahhadaily.</p>
+      </div>
+
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px;">* $0 extra means the booking feature is <em>included</em> in a Google Workspace subscription you'd likely want anyway for professional @sahhadaily.com email. A free personal Gmail account also has a limited version (one booking page).</p>
+  </section>
+
+  <section>
+    <h2>Side-by-side <em>comparison</em></h2>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Cal.com (free)</th>
+            <th>Cowlendar (Shopify app)</th>
+            <th>Google Workspace</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Realistic monthly cost</td><td><span class="yes">$0</span></td><td>≈ $14–30 flat</td><td><span class="yes">$0 if already on Workspace</span> · else $7–14/user</td></tr>
+          <tr><td>How cost scales</td><td>$0 for any number of experts</td><td>Flat (by booking revenue, not staff)</td><td>Per expert (if buying Workspace)</td></tr>
+          <tr><td>Customer needs an account?</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td>Meeting link (Meet/Zoom)</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes (Meet)</td></tr>
+          <tr><td>Email reminders</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes (up to 5)</td></tr>
+          <tr><td>SMS reminders</td><td class="yes">Yes (free)</td><td>Some tiers</td><td class="no">No (email only)</td></tr>
+          <tr><td>Multiple experts, own availability</td><td class="yes">Yes</td><td class="yes">Yes (paid)</td><td class="yes">Yes</td></tr>
+          <tr><td>Where it's managed</td><td>Each expert's Cal.com login</td><td class="yes">One Shopify dashboard</td><td>Each expert's Google Calendar</td></tr>
+          <tr><td>Design / branding control</td><td class="yes">Full (our own page)</td><td>Limited (their popup)</td><td>Medium (embedded page)</td></tr>
+          <tr><td>Anti-spam tools</td><td class="yes">Email verify · captcha · limits · payments</td><td>Built-in + payments</td><td class="yes">Email verification · payments</td></tr>
+          <tr><td>Setup effort</td><td>Medium (per-expert accounts)</td><td class="yes">Low (install app)</td><td>Low–medium (per Google account)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>How we keep it <em>spam-proof</em></h2>
+    <p class="lead">All three tools support the same layered protection — no open form for bots to abuse:</p>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Always on</h3>
+        <p><span class="shield">Layer 1</span> <b>Email verification</b> — a booking isn't confirmed until the customer verifies their email. Fake addresses die instantly.</p>
+        <p><span class="shield">Layer 2</span> <b>Captcha</b> (hCaptcha / reCAPTCHA) on the booking form to block bots.</p>
+        <p><span class="shield">Layer 3</span> <b>Booking limits</b> — minimum notice (e.g. 4 hours ahead), buffers between sessions, a cap on bookings per email per day, and a max future window.</p>
+      </div>
+      <div class="panel">
+        <h3>Strongest (optional)</h3>
+        <p><span class="shield">Layer 4</span> <b>Small deposit / payment to book</b> (even a token amount, refundable or credited to a purchase). This essentially eliminates spam <em>and</em> no-shows.</p>
+        <p style="margin-bottom:0;">A natural fit if consultations are paid anyway. All three options support taking payment at booking via Stripe.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How it lives on <em>the website</em></h2>
+    <p class="lead">Whichever engine we choose, the customer experience on our site is the same:</p>
+    <div class="panel">
+      <ol>
+        <li>A new branded page — <b>sahhadaily.com/pages/book</b> ("Book a Consultation") — matching our green &amp; Playfair design.</li>
+        <li>It reuses our existing <b>expert cards</b>, each with a "Book a session" button (this is the expert filter — pick an expert).</li>
+        <li>Clicking opens that expert's live calendar (inline or popup) → choose date → choose an open slot → name + email → confirm.</li>
+        <li>Both sides get a calendar invite with the meeting link + automatic reminders.</li>
+        <li>We add <b>"Book"</b> to the main menu and a button on the existing Experts section.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <h2>Does it integrate with <em>Shopify?</em></h2>
+    <p class="lead">Yes — all three sit natively on our site, and the customer never has to leave sahhadaily.com. Here's how each one connects:</p>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Cal.com → embed code</h3>
+        <p style="margin-bottom:0;">We drop Cal.com's embed (inline calendar or popup button) into a branded Shopify section. We control both the page <em>and</em> the widget's styling. The customer books on-site; the Meet link and reminders fire automatically.</p>
+      </div>
+      <div class="panel">
+        <h3>Google Workspace → embed code</h3>
+        <p style="margin-bottom:0;">Google Calendar gives each appointment page an <b>"add to your website"</b> snippet (a <em>Book</em> button or inline calendar). We paste it into our Shopify section — <b>no plug-in required</b>. The surrounding page is fully ours; the calendar widget itself loads in a Google iframe (lightly styleable — accent colour only).</p>
+      </div>
+      <div class="panel">
+        <h3>Cowlendar → native app</h3>
+        <p style="margin-bottom:0;">Installed straight from the Shopify App Store and managed entirely inside Shopify admin. It adds its own booking popup — the deepest native integration, with no embed code to maintain.</p>
+      </div>
+      <div class="panel">
+        <h3>Good to know</h3>
+        <p>The "Google &amp; YouTube" Shopify app is a <em>different</em> thing — it's for ads / Merchant Center / Analytics, <b>not</b> booking. For booking, the Google Calendar embed above is the route.</p>
+        <p style="margin-bottom:0;"><b>Branding control:</b> Cal.com (full) › Google Workspace (page ours, widget Google-styled) › Cowlendar (their popup).</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Our <em>recommendation</em></h2>
+    <p class="lead">It comes down to one question — do the experts already use (or want) professional Google email?</p>
+    <div class="tree">
+      <div class="branch">
+        <span class="q">Already paying for / want Google Workspace email (@sahhadaily.com)?</span>
+        <span class="arrow">→</span>
+        <span class="a">Google Workspace Appointment Scheduling</span>
+      </div>
+      <div class="branch">
+        <span class="q">Want strictly $0 and don't need Workspace?</span>
+        <span class="arrow">→</span>
+        <span class="a">Cal.com (free, per-expert accounts)</span>
+      </div>
+      <div class="branch">
+        <span class="q">Want everything inside Shopify admin and OK with ~$15–30/mo?</span>
+        <span class="arrow">→</span>
+        <span class="a">Cowlendar (Shopify app)</span>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:28px;">
+      <strong>Plain-language pick:</strong> if cost is the priority and we don't mind a one-time setup per expert, <strong>Cal.com is $0 and the most flexible</strong>. If we're setting up proper @sahhadaily.com emails anyway, <strong>Google Workspace</strong> gives us booking for free as a bonus and is the smoothest Google experience. <strong>Cowlendar</strong> is the easiest to run day-to-day, for a modest monthly fee.
+    </div>
+  </section>
+
+  <section>
+    <h2>Decisions we need to make</h2>
+    <div class="panel">
+      <ol>
+        <li><b>Which engine</b> — Cal.com (free) · Cowlendar (paid app) · Google Workspace.</li>
+        <li><b>Free or paid consultations</b> — paid doubles as the strongest anti-spam.</li>
+        <li><b>Video + calendar</b> — Google Meet (simplest) or Zoom; which do the experts use?</li>
+        <li><b>Reminders</b> — email is enough, or do we want SMS/WhatsApp too?</li>
+        <li><b>How many experts</b> to launch with, and their availability hours.</li>
+      </ol>
+    </div>
+  </section>
+
+  <footer>
+    Sahha Daily — Booking System Options · Internal planning document · Prepared June 2026.<br />
+    Prices are current as of June 2026 and may change; verify on each provider's site before committing.
+  </footer>
+
+</div>
+</body>
+</html>
