@@ -250,6 +250,23 @@ h1, h2, h3, h4, h5, h6,
   .header.header--middle-left .header__icons { justify-self: end; }
 }
 
+/* mobile/tablet layout (logo-left, Option A): logo flush-left · burger + cart
+   grouped together on the right. Pure grid-column reorder — the three children
+   keep their own grid-areas (heading | left-icons | icons) so nothing overlaps
+   and no markup changes are needed. Applies wherever the burger shows (≤989). */
+@media screen and (max-width: 989px) {
+  .header {
+    grid-template-areas: 'heading left-icons icons';
+    grid-template-columns: 1fr auto auto;
+    column-gap: 0.4rem;
+  }
+  .header__heading,
+  .header__heading-link {
+    text-align: left;
+    justify-self: start;
+  }
+}
+
 /* desktop nav links: uppercase, letter-spaced, ink, orange hover underline */
 .header__inline-menu .header__menu-item {
   text-transform: uppercase;
