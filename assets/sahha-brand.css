@@ -999,18 +999,63 @@ h1, h2, h3, h4, h5, h6,
   background: var(--line);
 }
 
-/* fields: lighter paper fill, larger text, green focus ring */
+/* lead emphasis → orange italic (brand green-text / orange-accent pattern) */
+.sahha-contact__lead em {
+  font-style: italic;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* fields: lighter paper fill, roomier boxes, readable text */
 .sahha-contact .field__input,
 .sahha-contact .text-area {
   background: var(--paper-2);
   font-size: 1.52rem;
 }
+.sahha-contact .field__input:not(.text-area) {
+  height: 5.4rem;
+}
+.sahha-contact .text-area {
+  min-height: 13rem;
+  padding: 1.8rem;
+  line-height: 1.5;
+}
+
+/* resting label = the visible placeholder: vertically centred so it sits
+   comfortably inside the box instead of clipping at the top */
 .sahha-contact .field__label {
   color: var(--muted);
-  font-size: 1.36rem;
+  font-size: 1.5rem;
+  letter-spacing: 0.01em;
+  top: calc(1.8rem + var(--inputs-border-width));
 }
+.sahha-contact .text-area ~ .field__label {
+  top: calc(1.9rem + var(--inputs-border-width));
+}
+/* floated label (on focus / when filled) → small orange caption */
+.sahha-contact .field__input:focus ~ .field__label,
+.sahha-contact .field__input:not(:placeholder-shown) ~ .field__label {
+  font-size: 1.12rem;
+  top: calc(var(--inputs-border-width) + 0.7rem);
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+/* make room for the floated label */
+.sahha-contact .field__input:not(.text-area):focus,
+.sahha-contact .field__input:not(.text-area):not(:placeholder-shown) {
+  padding: 2.5rem 1.8rem 0.7rem;
+}
+.sahha-contact .text-area:focus,
+.sahha-contact .text-area:not(:placeholder-shown) {
+  padding-top: 2.8rem;
+}
+/* focus ring → a hint of orange on the active field */
 .sahha-contact .field:focus-within:after {
-  box-shadow: 0 0 0 0.2rem var(--green);
+  box-shadow: 0 0 0 0.2rem var(--accent);
+}
+/* required-field asterisk → orange */
+.sahha-contact .field__label span[aria-hidden] {
+  color: var(--accent);
 }
 
 /* submit → brand green pill, darkens + lifts on hover */
