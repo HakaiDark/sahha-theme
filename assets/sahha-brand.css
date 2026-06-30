@@ -921,3 +921,123 @@ h1, h2, h3, h4, h5, h6,
   background-position: center;
   background-size: 13px;
 }
+
+/* =============================================================
+   Contact page — brand the stock Dawn contact form. No original
+   to port (live site has no /contact), so designed to match the
+   site: green Playfair title, WhatsApp-first CTA, paper fields,
+   branded green pill submit. Scoped to .sahha-contact so no other
+   Dawn form is affected. REM ×1.6 for Dawn's 10px root.
+   ============================================================= */
+/* page title (Contact + other static pages) → brand green Playfair */
+.main-page-title.page-title {
+  font-family: var(--serif);
+  font-weight: 500;
+  color: var(--green);
+  text-transform: capitalize;
+  letter-spacing: -0.012em;
+}
+
+.sahha-contact {
+  max-width: 64rem;
+  --inputs-radius: 1.2rem;
+  --inputs-radius-outset: 1.3rem;
+}
+
+/* intro + WhatsApp-first CTA */
+.sahha-contact__intro {
+  text-align: center;
+  margin-bottom: clamp(2.8rem, 4vw, 4.4rem);
+}
+.sahha-contact__lead {
+  font-size: 1.76rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0 auto 2.2rem;
+  max-width: 44rem;
+}
+.sahha-contact__wa {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 2.8rem;
+  border-radius: var(--r-pill);
+  background: #25d366;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.52rem;
+  text-decoration: none;
+  box-shadow: var(--brand-shadow-sm);
+  transition: transform 0.35s var(--ease), background 0.35s var(--ease), box-shadow 0.35s var(--ease);
+}
+.sahha-contact__wa:hover {
+  background: #1ebe5d;
+  color: #fff;
+  transform: translateY(-0.2rem);
+  box-shadow: 0 1.4rem 3rem -1.6rem rgba(28, 60, 42, 0.45);
+}
+.sahha-contact__wa-icon {
+  flex: none;
+}
+.sahha-contact__or {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  margin: clamp(2.4rem, 3vw, 3.6rem) auto 0;
+  max-width: 40rem;
+  color: var(--muted);
+  font-size: 1.28rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.sahha-contact__or::before,
+.sahha-contact__or::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+/* fields: lighter paper fill, larger text, green focus ring */
+.sahha-contact .field__input,
+.sahha-contact .text-area {
+  background: var(--paper-2);
+  font-size: 1.52rem;
+}
+.sahha-contact .field__label {
+  color: var(--muted);
+  font-size: 1.36rem;
+}
+.sahha-contact .field:focus-within:after {
+  box-shadow: 0 0 0 0.2rem var(--green);
+}
+
+/* submit → brand green pill, darkens + lifts on hover */
+.sahha-contact .contact__button {
+  text-align: center;
+}
+.sahha-contact .contact__button .button {
+  background: var(--green);
+  color: #fff;
+  border-radius: var(--r-pill);
+  padding: 0 4rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: var(--brand-shadow-sm);
+  transition: background 0.35s var(--ease), transform 0.35s var(--ease);
+}
+.sahha-contact .contact__button .button:before,
+.sahha-contact .contact__button .button:after {
+  display: none;
+}
+.sahha-contact .contact__button .button:hover {
+  background: var(--green-deep);
+  transform: translateY(-0.2rem);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sahha-contact__wa,
+  .sahha-contact .contact__button .button {
+    transition: none;
+  }
+}
